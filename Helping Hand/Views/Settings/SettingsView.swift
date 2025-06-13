@@ -12,9 +12,14 @@ struct SettingsView: View {
         // https://blog.techchee.com/build-app-settings-page-with-swiftui/
         NavigationSplitView {
             
-            List {
-                SettingsView()
+            List() {
+                NavigationLink(destination: EmptyView(), label: {
+                    Label("Test", systemImage: "gear")
+                        .font(.title3)
+                        .imageScale(.large)
+                }).padding()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("Settings")
             
         } detail: {
