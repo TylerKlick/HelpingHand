@@ -13,6 +13,7 @@ struct RowView: View, Identifiable {
     let title: String
     let backgroundColor: Color
     var fillWidth: Bool = true
+    var destination: AnyView = AnyView(EmptyView())
 
     var body: some View {
         HStack(spacing: 20) {
@@ -24,6 +25,7 @@ struct RowView: View, Identifiable {
                 .padding(16)
                 .background(backgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
 
             Text(title)
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
