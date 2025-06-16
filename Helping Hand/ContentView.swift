@@ -10,26 +10,19 @@ import SwiftUI
 struct ContentView: View {
     
     enum Tab {
-        case home
         case device
-        case train
+        case gestures
         case settings
         case help
     }
-    @State var selectedTab: Tab = .home
+    @State var selectedTab: Tab = .device
 
     var body: some View {
             
         
         TabView(selection: $selectedTab) {
             
-            Image(systemName: "house")
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-                .tag(Tab.home)
-            
-            Image(systemName: "house")
+            MyDeviceView()
                 .tabItem {
                     Label("My Device", systemImage: "hands.sparkles")
                 }
@@ -37,9 +30,9 @@ struct ContentView: View {
             
             Image(systemName: "house")
                 .tabItem {
-                    Label("Train", systemImage: "brain.fill")
+                    Label("Gestures", systemImage: "brain.fill")
                 }
-                .tag(Tab.train)
+                .tag(Tab.device)
             
             Image(systemName: "house")
                 .tabItem {
