@@ -14,6 +14,7 @@ struct ContentView: View {
         case device
         case train
         case settings
+        case help
     }
     @State var selectedTab: Tab = .home
 
@@ -40,12 +41,17 @@ struct ContentView: View {
                 }
                 .tag(Tab.train)
             
+            Image(systemName: "house")
+                .tabItem {
+                    Label("Help", systemImage: "exclamationmark.message.fill")
+                }
+                .tag(Tab.help)
+            
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
                 .tag(Tab.settings)
-            
         }
     }
 }

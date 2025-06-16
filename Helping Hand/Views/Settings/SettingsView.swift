@@ -16,9 +16,8 @@ struct SettingsView: View {
         
         
         .init(systemImageName: "hammer.fill", title: "Testing", backgroundColor: .green, fillWidth: true)
-
-        
     ]
+    
     var body: some View {
         // https://blog.techchee.com/build-app-settings-page-with-swiftui/
         NavigationSplitView {
