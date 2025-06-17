@@ -12,7 +12,7 @@ struct NotConnectedAnimationView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            ZStack {
+            ZStack {                  
                 Text("🖐️")
                     .font(.system(size: 80))
                     .opacity(0.5)
