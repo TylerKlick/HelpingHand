@@ -66,7 +66,7 @@ extension ViewController: CBCentralManagerDelegate {
 
           var characteristicASCIIValue = NSString()
 
-        guard characteristic == cbuuid.rxCharacteristic,
+        guard characteristic == cbuuid,
 
           let characteristicValue = characteristic.value,
           let ASCIIstring = NSString(data: characteristicValue, encoding: String.Encoding.utf8.rawValue) else { return }

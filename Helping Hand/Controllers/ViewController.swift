@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     private var peripheralArray: [CBPeripheral] = []
     private var rssiArray = [NSNumber]()
     private var timer = Timer()
-    
+
     let cbuuid = CBUUIDs()
     
     override func viewDidLoad() {
