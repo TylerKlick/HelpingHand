@@ -59,22 +59,22 @@ extension ViewController: CBCentralManagerDelegate {
           peripheral.discoverServices([CBUUIDs.BLEService_UUID])
       }
     
-    /**
-     * Reads the value of a characteristic
-     */
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-
-          var characteristicASCIIValue = NSString()
-
-        guard characteristic == cbuuid,
-
-          let characteristicValue = characteristic.value,
-          let ASCIIstring = NSString(data: characteristicValue, encoding: String.Encoding.utf8.rawValue) else { return }
-
-          characteristicASCIIValue = ASCIIstring
-
-          print("Value Recieved: \((characteristicASCIIValue as String))")
-    }
+//    /**
+//     * Reads the value of a characteristic
+//     */
+//    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+//
+//          var characteristicASCIIValue = NSString()
+//
+////        guard characteristic == cbuuid,
+//
+//          let characteristicValue = characteristic.value,
+//          let ASCIIstring = NSString(data: characteristicValue, encoding: String.Encoding.utf8.rawValue) else { return }
+//
+//          characteristicASCIIValue = ASCIIstring
+//
+//          print("Value Recieved: \((characteristicASCIIValue as String))")
+//    }
     
     // MARK - Helper Methods
     

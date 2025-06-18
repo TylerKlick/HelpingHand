@@ -19,33 +19,33 @@ struct ContentView: View {
 
     var body: some View {
             
-        
-        TabView(selection: $selectedTab) {
-            
-            MyDeviceView()
-                .tabItem {
-                    Label("My Device", systemImage: "hands.sparkles")
-                }
-                .tag(Tab.device)
-            
-            Image(systemName: "house")
-                .tabItem {
-                    Label("Gestures", systemImage: "brain.fill")
-                }
-                .tag(Tab.device)
-            
-            Image(systemName: "house")
-                .tabItem {
-                    Label("Help", systemImage: "exclamationmark.message.fill")
-                }
-                .tag(Tab.help)
-            
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
-                .tag(Tab.settings)
-        }
+        CustomTabView() 
+//        TabView(selection: $selectedTab) {
+//            
+//            MyDeviceView()
+//                .tabItem {
+//                    Label("My Device", systemImage: "hands.sparkles")
+//                }
+//                .tag(Tab.device)
+//            
+//            CustomTabView()
+//                .tabItem {
+//                    Label("Gestures", systemImage: "brain.fill")
+//                }
+//                .tag(Tab.device)
+//            
+//            Image(systemName: "house")
+//                .tabItem {
+//                    Label("Help", systemImage: "exclamationmark.message.fill")
+//                }
+//                .tag(Tab.help)
+//            
+//            SettingsView()
+//                .tabItem {
+//                    Label("Settings", systemImage: "gearshape.fill")
+//                }
+//                .tag(Tab.settings)
+//        }
     }
 }
 
