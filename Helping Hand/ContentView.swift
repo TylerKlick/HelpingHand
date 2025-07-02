@@ -9,17 +9,18 @@ import SwiftUI
 
 struct ContentView: View {
     
-    enum Tab {
-        case device
-        case gestures
-        case settings
-        case help
-    }
-    @State var selectedTab: Tab = .device
 
+    private var tabs: [TabInfo] = [
+        TabInfo(title: "Profile", icon: "person.fill", color: .blue),
+        TabInfo(title: "Search", icon: "brain.fill", color: .purple),
+        TabInfo(title: "Favorites", icon: "heart.fill", color: .green),
+        TabInfo(title: "Settings", icon: "gearshape.fill", color: .pink)
+    ]
+    
+    
     var body: some View {
-            
-        CustomTabView() 
+//            DeviceListView()
+        CustomTabView(tabs: tabs)
 //        TabView(selection: $selectedTab) {
 //            
 //            MyDeviceView()

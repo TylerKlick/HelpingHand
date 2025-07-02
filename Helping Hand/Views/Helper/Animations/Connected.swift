@@ -74,7 +74,7 @@ struct DeviceConnectedView: View {
             backgroundOpacity = 1.0
         }
         
-        // Animate checkmark with bounce
+        // Animate checkmark with bounce 
         withAnimation(.spring(response: 0.6, dampingFraction: 0.6, blendDuration: 0).delay(0.1)) {
             checkmarkScale = 1.0
         }

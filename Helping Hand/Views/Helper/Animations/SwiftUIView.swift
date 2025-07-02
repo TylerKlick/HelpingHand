@@ -1,39 +1,40 @@
 import SwiftUI
 
-struct DeviceNotConnectedView: View {
+struct BluetoothOffView: View {
     @State private var isAnimating = false
-    @State private var pulseScale: CGFloat = 1.0
-    @State private var opacity: Double = 0.3
-    
+    @State private var rippleScale: CGFloat = 1.0
+    @State private var rippleOpacity: Double = 0.2
+
     var body: some View {
         VStack(spacing: 30) {
-            // Animated device icon with pulse effect
             ZStack {
-                // Background circle that pulses
+                // Faded ripple to suggest failure of connection
                 Circle()
-                    .fill(Color.red.opacity(0.65))
-                    .brightness(0.2)
-                    .frame(width: 120, height: 120)
-                    .scaleEffect(pulseScale)
-                    .opacity(opacity)
+                    .strokeBorder(Color.blue.opacity(0.4), lineWidth: 3)
+                    .scaleEffect(rippleScale)
+                    .opacity(rippleOpacity)
                 
-                // Device icon
-                Image(systemName: "wifi.slash")
-                    .font(.system(size: 50))
-                    .foregroundColor(.red)
+                Circle()
+                    .fill(Color.blue.opacity(0.15))
+                    .frame(width: 120, height: 120)
+                
+                // Valid SF Symbol
+                Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                    .font(.system(size: 50, weight: .semibold))
+                    .foregroundColor(.blue)
             }
-            .scaleEffect(isAnimating ? 1.1 : 1.0)
+            .frame(width: 150, height: 150)
             .onAppear {
-                startAnimations()
+                animateRipple()
             }
             
             VStack(spacing: 16) {
-                Text("Device Not Connected")
+                Text("Bluetooth is Turned Off")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                 
-                Text("Please connect your device to continue using the app")
+                Text("Enable Bluetooth in your settings to scan and connect to devices.")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -41,13 +42,15 @@ struct DeviceNotConnectedView: View {
             }
             
             Button(action: {
-                // TODO : Connect to bluetooth controller.
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
             }) {
                 HStack {
-                    Image(systemName: "arrow.clockwise")
+                    Image(systemName: "gear")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
-                    Text("Try Again")
+                    Text("Open Settings")
                         .fontWeight(.medium)
                 }
                 .foregroundColor(.white)
@@ -67,13 +70,13 @@ struct DeviceNotConnectedView: View {
         .padding()
     }
     
-    private func startAnimations() {
+    private func animateRipple() {
         withAnimation(
-            Animation.easeInOut(duration: 1.5)
-                .repeatForever(autoreverses: true)
+            Animation.easeOut(duration: 1.8)
+                .repeatForever(autoreverses: false)
         ) {
-            pulseScale = 1.3
-            opacity = 0.1
+            rippleScale = 1.6
+            rippleOpacity = 0.05
         }
         
         withAnimation(
@@ -84,9 +87,10 @@ struct DeviceNotConnectedView: View {
         }
     }
 }
-struct DeviceNotConnectedView_Previews: PreviewProvider {
+
+struct BluetoothOffView_Previews: PreviewProvider {
     static var previews: some View {
-        DeviceNotConnectedView()
+        BluetoothOffView()
             .previewLayout(.sizeThatFits)
     }
 }

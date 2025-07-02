@@ -66,6 +66,22 @@ struct TabItem: View {
                 .shadow(color: isSelected ? accentColor.opacity(0.5) : .clear, radius: isSelected ? 5 : 0)
                 .scaleEffect(isSelected ? 1.1 : 1.0)
                 .animation(animation, value: isSelected)
+            
+//            if isSelected {
+//                Text("Label") // Customize this label based on your context
+//                    .font(.caption)
+//                    .fontWeight(.semibold)
+//                    .foregroundStyle(
+//                        LinearGradient(
+//                            colors: [accentColor, accentColor.opacity(0.7)],
+//                            startPoint: .topLeading,
+//                            endPoint: .bottomTrailing
+//                        )
+//                    )
+//                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+//                    .animation(animation, value: isSelected)
+//                    .offset(y: itemSize / 2 + 11)
+//            }
         }
         // Disable interaction during animation
         .disabled(isAnimating)

@@ -13,11 +13,11 @@ struct MyDeviceView: View {
     
     var body: some View {
         VStack {
-            if isConnected {
-                ConnectedAnimationView()
-            } else {
-                NotConnectedAnimationView()
-            }
+//            if isConnected {
+//                ConnectedAnimationView()
+//            } else {
+//                NotConnectedAnimationView()
+            // }
             
             Button("Connect")
             {

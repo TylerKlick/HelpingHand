@@ -13,14 +13,10 @@ struct CustomTabView: View {
     @State private var navColor: Color = .blue
     @State private var isAnimating = false
 
-    private let tabs: [TabInfo] = [
-        TabInfo(title: "Profile", icon: "person.fill", color: .blue),
-        TabInfo(title: "Search", icon: "brain.fill", color: .purple),
-        TabInfo(title: "Favorites", icon: "heart.fill", color: .green),
-        TabInfo(title: "Settings", icon: "gearshape.fill", color: .pink)
-    ]
+    let tabs: [TabInfo]
 
     var body: some View {
+        
         ZStack(alignment: .bottom) {
             navColor
                 .opacity(0.1)
@@ -89,8 +85,8 @@ struct CustomTabView: View {
     }
 }
 
-struct GlassTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        CustomTabView()
-    }
-}
+//struct GlassTabView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CustomTabView([])
+//    }
+//}
