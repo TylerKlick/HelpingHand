@@ -12,6 +12,8 @@ struct CustomTabView: View {
     @State private var selectedIndex = 0
     @State private var navColor: Color = .blue
     @State private var isAnimating = false
+    private let cornerRadius: CGFloat = 38 // Corner radius size
+    private let itemSize: CGFloat =  2.2 // Size of the background and shadow rectangles on menu
 
     let tabs: [TabInfo]
 
@@ -36,7 +38,7 @@ struct CustomTabView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
-            HStack(spacing: 20) {
+            HStack(spacing: 14) {
                 ForEach(tabs.indices, id: \.self) { i in
                     TabItem(
                         isSelected: selectedIndex == i,
@@ -60,19 +62,19 @@ struct CustomTabView: View {
                     }
                 }
             }
-            .padding()
+            .padding(18)
             .background(
-                RoundedRectangle(cornerRadius: 35)
+                RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(.ultraThinMaterial)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 35)
+                        RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
                                 LinearGradient(
                                     colors: [Color.white.opacity(0.3), navColor.opacity(0.2)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
-                                lineWidth: 1.5
+                                lineWidth: itemSize
                             )
                     )
                     .shadow(color: navColor.opacity(0.3), radius: 20, x: 0, y: 10)

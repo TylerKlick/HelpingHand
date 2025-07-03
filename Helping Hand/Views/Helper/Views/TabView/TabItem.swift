@@ -13,6 +13,8 @@ struct TabItem: View {
     var accentColor: Color
     var isAnimating: Bool = false
     let action: () -> Void
+    private let selectedOffset: CGFloat = 11 // The Offset size of the selected
+    private let unselectedOffset: CGFloat = 8 // Offset of unselected text
 
     private let itemSize: CGFloat = 50
     private let animation: Animation = .interpolatingSpring(mass: 0.3, stiffness: 120, damping: 8)
@@ -49,7 +51,7 @@ struct TabItem: View {
                 .shadow(color: isSelected ? accentColor.opacity(0.3) : .clear, radius: isSelected ? 10 : 0, x: 0, y: 4)
                 .scaleEffect(isSelected ? 1.05 : 1.0)
                 .animation(animation, value: isSelected)
-
+            
             Image(systemName: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -57,8 +59,8 @@ struct TabItem: View {
                 .foregroundStyle(
                     LinearGradient(
                         colors: isSelected
-                            ? [accentColor, accentColor.opacity(0.8)]
-                            : [Color.gray.opacity(0.6), Color.gray.opacity(0.3)],
+                        ? [accentColor, accentColor.opacity(0.8)]
+                        : [Color.gray.opacity(0.6), Color.gray.opacity(0.3)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -67,21 +69,20 @@ struct TabItem: View {
                 .scaleEffect(isSelected ? 1.1 : 1.0)
                 .animation(animation, value: isSelected)
             
-//            if isSelected {
-//                Text("Label") // Customize this label based on your context
-//                    .font(.caption)
-//                    .fontWeight(.semibold)
-//                    .foregroundStyle(
-//                        LinearGradient(
-//                            colors: [accentColor, accentColor.opacity(0.7)],
-//                            startPoint: .topLeading,
-//                            endPoint: .bottomTrailing
-//                        )
-//                    )
-//                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-//                    .animation(animation, value: isSelected)
-//                    .offset(y: itemSize / 2 + 11)
-//            }
+            Text("Label") // Customize this label based on your context
+                .fontWeight(.semibold)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: isSelected ? [accentColor, accentColor.opacity(0.8)] : [.primary, .primary.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .animation(animation, value: isSelected)
+                    .offset(y: itemSize / 2 + (isSelected ? selectedOffset : unselectedOffset))
+                    .font( isSelected ? .system(size: 15) : .caption)
+            
         }
         // Disable interaction during animation
         .disabled(isAnimating)
@@ -94,6 +95,8 @@ struct TabItem: View {
         
         // Unselected view -- we expect to be circular
         TabItem(isSelected: false, image: "brain.fill", accentColor: .blue, action: {})
+            .padding()
+        
         
         // Selected view -- we expect larger and square for animation
         TabItem(isSelected: true, image: "brain.fill", accentColor: .blue, action: {})
