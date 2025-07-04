@@ -50,7 +50,7 @@ jobs:
         echo "<script>window.location.href += \"/Helping-Hand/documentation/helpinghand\"</script>" > docs/index.html
 
     - name: Upload docs artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v4
       with:
         path: 'docs'
 
