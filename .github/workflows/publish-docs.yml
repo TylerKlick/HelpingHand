@@ -18,7 +18,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
     - name: Checkout repository
@@ -33,21 +33,35 @@ jobs:
 
     - name: Build DocC documentation
       run: |
+        set -euo pipefail  # Fail on errors
+
+        # Build documentation archive
         xcodebuild docbuild \
           -project "Helping Hand.xcodeproj" \
           -scheme "Helping Hand" \
           -derivedDataPath /tmp/docbuild \
           -destination 'generic/platform=iOS'
 
-        DOCC_PATH=$(xcrun --find docc)
-        ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" | head -n 1)
+        # Find DocC archive path
+        ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
+        
+        # Get module name from archive structure
+        MODULE_NAME=$(find "$ARCHIVE_PATH/data/documentation" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | head -n1)
 
+        # Process for static hosting
+        DOCC_PATH=$(xcrun --find docc)
         "$DOCC_PATH" process-archive \
           transform-for-static-hosting "$ARCHIVE_PATH" \
-          --hosting-base-path Helping-Hand \
+          --hosting-base-path "" \  # Empty base path for site root
           --output-path docs
 
-        echo "<script>window.location.href += \"/Helping-Hand/documentation/helpinghand\"</script>" > docs/index.html
+        # Create redirect to documentation
+        echo "<!DOCTYPE html>
+        <html>
+          <head>
+            <meta http-equiv=\"refresh\" content=\"0; url='/documentation/$MODULE_NAME'\" />
+          </head>
+        </html>" > docs/index.html
 
     - name: Upload docs artifact
       uses: actions/upload-pages-artifact@v4
