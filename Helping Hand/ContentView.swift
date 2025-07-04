@@ -9,18 +9,23 @@ import SwiftUI
 
 struct ContentView: View {
     
-
-    private var tabs: [TabInfo] = [
-        TabInfo(title: "Profile", imagePath: "person.fill", accentColor: .blue, onTap: {}),
-        TabInfo(title: "Search", imagePath: "brain.fill", accentColor: .purple, onTap: {}),
-        TabInfo(title: "Favorites", imagePath: "heart.fill", accentColor: .green, onTap: {}),
-        TabInfo(title: "Settings", imagePath: "gearshape.fill", accentColor: .pink, onTap: {} )
-    ]
-    
-    
     var body: some View {
-//            DeviceListView()
-//        CustomTabView(tabs: tabs)
+        CustomTabView {
+            CustomTab(title: "Home", image: "house", accentColor: .blue) {
+                VStack {
+                    Text("Home View")
+                        .font(.largeTitle)
+                    Spacer()
+                }
+            }
+            CustomTab(title: "Settings", image: "gear", accentColor: .green) {
+                VStack {
+                    Text("Settings View")
+                        .font(.largeTitle)
+                    Spacer()
+                }
+            }
+        }
     }
 }
 
