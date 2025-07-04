@@ -24,6 +24,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Confirm xcodeproj exists
+      run: |
+        if [ ! -d "Helping Hand.xcodeproj" ]; then
+          echo "❌ ERROR: .xcodeproj not found"
+          exit 1
+        fi
+
     - name: Build DocC documentation
       run: |
         xcodebuild docbuild \
@@ -33,16 +40,17 @@ jobs:
           -destination 'generic/platform=iOS'
 
         DOCC_PATH=$(xcrun --find docc)
+        ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" | head -n 1)
 
         "$DOCC_PATH" process-archive \
-          transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/HelpingHand.doccarchive \
+          transform-for-static-hosting "$ARCHIVE_PATH" \
           --hosting-base-path Helping-Hand \
           --output-path docs
 
         echo "<script>window.location.href += \"/Helping-Hand/documentation/helpinghand\"</script>" > docs/index.html
 
     - name: Upload docs artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v2
       with:
         path: 'docs'
 
