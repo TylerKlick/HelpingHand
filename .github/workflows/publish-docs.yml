@@ -18,34 +18,53 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build DocC documentation
-      run: |
-        xcodebuild docbuild \
-          -project "Helping Hand.xcodeproj" \
-          -scheme "Helping Hand" \
-          -derivedDataPath /tmp/docbuild \
-          -destination 'generic/platform=iOS'
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
-        DOCC_PATH=$(xcrun --find docc)
+      - name: Verify Xcode version
+        run: xcodebuild -version
 
-        "$DOCC_PATH" process-archive \
-          transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/HelpingHand.doccarchive \
-          --hosting-base-path Helping-Hand \
-          --output-path docs
+      - name: Fix Xcode project (if corrupted)
+        run: |
+          if [ -f "Helping Hand.xcodeproj/project.pbxproj" ]; then
+            # Backup the project file
+            cp "Helping Hand.xcodeproj/project.pbxproj" "Helping Hand.xcodeproj/project.pbxproj.bak"
+            # Remove potential merge markers
+            sed -i '' '/^<<<<<<</,/^>>>>>>>/d' "Helping Hand.xcodeproj/project.pbxproj"
+            sed -i '' '/^=======$/d' "Helping Hand.xcodeproj/project.pbxproj"
+          else
+            echo "❌ ERROR: project.pbxproj not found!"
+            exit 1
+          fi
 
-        echo "<script>window.location.href += \"/Helping-Hand/documentation/helpinghand\"</script>" > docs/index.html
+      - name: Build DocC documentation
+        run: |
+          set -euo pipefail
 
-    - name: Upload docs artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'docs'
+          xcodebuild docbuild \
+            -project "Helping Hand.xcodeproj" \
+            -scheme "Helping Hand" \
+            -derivedDataPath /tmp/docbuild \
+            -destination 'generic/platform=iOS'
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v1
+          ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
+          MODULE_NAME=$(find "$ARCHIVE_PATH/data/documentation" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | head -n1)
+
+          DOCC_PATH=$(xcrun --find docc)
+          "$DOCC_PATH" process-archive \
+            transform-for-static-hosting "$ARCHIVE_PATH" \
+            --hosting-base-path "" \
+            --output-path docs
+
+          echo "<!DOCTYPE html>
+          <html>
+            <head>
+              <meta http-equiv=\"refresh\" content=\"0; url='/documentation/$MODULE_NAME'\" />
+            </head>
+ 
