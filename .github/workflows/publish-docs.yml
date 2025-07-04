@@ -1,17 +1,50 @@
 name: Deploy DocC
 
-# Only update documentation for official updates to the main branch
-on :
+on:
   push:
     branches: ["main"]
 
-# Allow deployment on GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Only one deployment at a time
 concurrency:
   group: pages
   cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: macos-12
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Build DocC documentation
+      run: |
+        xcodebuild docbuild \
+          -scheme HelpingHand \
+          -derivedDataPath /tmp/docbuild \
+          -destination 'generic/platform=iOS'
+
+        DOCC_PATH=$(xcrun --find docc)
+
+        "$DOCC_PATH" process-archive \
+          transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/HelpingHand.doccarchive \
+          --hosting-base-path HelpingHand \
+          --output-path docs
+
+        echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
+
+    - name: Upload docs artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: 'docs'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
