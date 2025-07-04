@@ -27,6 +27,7 @@ jobs:
     - name: Build DocC documentation
       run: |
         xcodebuild docbuild \
+          -project "Helping Hand.xcodeproj" \
           -scheme "Helping Hand" \
           -derivedDataPath /tmp/docbuild \
           -destination 'generic/platform=iOS'
