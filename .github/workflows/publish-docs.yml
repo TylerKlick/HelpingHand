@@ -2,7 +2,7 @@ name: Deploy DocC Documentation to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Or "master" if still using it
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -19,9 +19,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-13
+
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Xcode version for Swift 6 (Xcode 15.3)
         run: sudo xcode-select -s "/Applications/Xcode_15.3.app"
@@ -32,7 +33,6 @@ jobs:
       - name: Build DocC archive
         run: |
           DOC_PATH=/tmp/docbuild
-          ARCHIVE_NAME="Helping_Hand.doccarchive"
           OUTPUT_DIR=docs
           BASE_PATH=helping-hand-docs
 
@@ -42,7 +42,6 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath "$DOC_PATH"
 
-          # Find the .doccarchive generated
           ARCHIVE=$(find "$DOC_PATH" -name "*.doccarchive" | head -n 1)
           echo "Found archive: $ARCHIVE"
 
@@ -54,10 +53,10 @@ jobs:
           echo '<meta http-equiv="refresh" content="0; url=helping-hand-docs/documentation/helpinghand">' > "$OUTPUT_DIR/index.html"
 
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: 'docs'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
