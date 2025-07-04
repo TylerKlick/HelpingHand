@@ -22,9 +22,9 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Confirm xcodeproj exists
+    - name: Confirm .xcodeproj exists
       run: |
         if [ ! -d "Helping Hand.xcodeproj" ]; then
           echo "❌ ERROR: .xcodeproj not found"
