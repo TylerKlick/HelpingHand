@@ -18,7 +18,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
     - name: Checkout repository
@@ -33,29 +33,23 @@ jobs:
 
     - name: Build DocC documentation
       run: |
-        set -euo pipefail  # Fail on errors
+        set -euo pipefail
 
-        # Build documentation archive
         xcodebuild docbuild \
           -project "Helping Hand.xcodeproj" \
           -scheme "Helping Hand" \
           -derivedDataPath /tmp/docbuild \
           -destination 'generic/platform=iOS'
 
-        # Find DocC archive path
         ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
-        
-        # Get module name from archive structure
         MODULE_NAME=$(find "$ARCHIVE_PATH/data/documentation" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | head -n1)
 
-        # Process for static hosting
         DOCC_PATH=$(xcrun --find docc)
         "$DOCC_PATH" process-archive \
           transform-for-static-hosting "$ARCHIVE_PATH" \
-          --hosting-base-path "" \  # Empty base path for site root
+          --hosting-base-path "" \
           --output-path docs
 
-        # Create redirect to documentation
         echo "<!DOCTYPE html>
         <html>
           <head>
@@ -64,10 +58,8 @@ jobs:
         </html>" > docs/index.html
 
     - name: Upload docs artifact
-      uses: actions/upload-pages-artifact@v3  # Corrected to v3 (latest stable)
-      with:
-        path: 'docs'
+      uses: actions/upload-pages-artifact@v3
 
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v3  # Also updated to v3 for consistency
+      uses: actions/deploy-pages@v3
