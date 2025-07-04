@@ -6,6 +6,31 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FAFE83C02E186E8A007EF21E /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE839B2E186E8A007EF21E /* Central.swift */; };
+		FAFE83C12E186E8A007EF21E /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE839C2E186E8A007EF21E /* CentralManager.swift */; };
+		FAFE83C22E186E8A007EF21E /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE839D2E186E8A007EF21E /* Peripheral.swift */; };
+		FAFE83C32E186E8A007EF21E /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE839E2E186E8A007EF21E /* Test.swift */; };
+		FAFE83C42E186E8A007EF21E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE839F2E186E8A007EF21E /* ViewController.swift */; };
+		FAFE83C52E186E8A007EF21E /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83A22E186E8A007EF21E /* Action.swift */; };
+		FAFE83C62E186E8A007EF21E /* CBUUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83A42E186E8A007EF21E /* CBUUIDs.swift */; };
+		FAFE83C72E186E8A007EF21E /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83A62E186E8A007EF21E /* Entry.swift */; };
+		FAFE83C82E186E8A007EF21E /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83A72E186E8A007EF21E /* User.swift */; };
+		FAFE83C92E186E8A007EF21E /* CustomTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83A92E186E8A007EF21E /* CustomTab.swift */; };
+		FAFE83CA2E186E8A007EF21E /* CustomTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83AC2E186E8A007EF21E /* CustomTabView.swift */; };
+		FAFE83CB2E186E8A007EF21E /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83AD2E186E8A007EF21E /* RowView.swift */; };
+		FAFE83CC2E186E8A007EF21E /* BluetoothConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83AF2E186E8A007EF21E /* BluetoothConnectedView.swift */; };
+		FAFE83CD2E186E8A007EF21E /* BluetoothDisabledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B02E186E8A007EF21E /* BluetoothDisabledView.swift */; };
+		FAFE83CE2E186E8A007EF21E /* BluetoothDisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B12E186E8A007EF21E /* BluetoothDisconnectedView.swift */; };
+		FAFE83CF2E186E8A007EF21E /* LoadingWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B22E186E8A007EF21E /* LoadingWheel.swift */; };
+		FAFE83D02E186E8A007EF21E /* MyDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B42E186E8A007EF21E /* MyDeviceView.swift */; };
+		FAFE83D12E186E8A007EF21E /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B62E186E8A007EF21E /* AccountView.swift */; };
+		FAFE83D22E186E8A007EF21E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83B72E186E8A007EF21E /* SettingsView.swift */; };
+		FAFE83D32E186E8A007EF21E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83BC2E186E8A007EF21E /* ContentView.swift */; };
+		FAFE83D42E186E8A007EF21E /* Helping_HandApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFE83BE2E186E8A007EF21E /* Helping_HandApp.swift */; };
+		FAFE83D52E186E8A007EF21E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAFE83BB2E186E8A007EF21E /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXBuildRule section */
 		FAFE83972E185B43007EF21E /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -22,15 +47,30 @@
 
 /* Begin PBXFileReference section */
 		FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Helping Hand.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAFE839B2E186E8A007EF21E /* Central.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Central.swift; sourceTree = "<group>"; };
+		FAFE839C2E186E8A007EF21E /* CentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
+		FAFE839D2E186E8A007EF21E /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		FAFE839E2E186E8A007EF21E /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		FAFE839F2E186E8A007EF21E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FAFE83A22E186E8A007EF21E /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		FAFE83A42E186E8A007EF21E /* CBUUIDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUUIDs.swift; sourceTree = "<group>"; };
+		FAFE83A62E186E8A007EF21E /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
+		FAFE83A72E186E8A007EF21E /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		FAFE83A92E186E8A007EF21E /* CustomTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTab.swift; sourceTree = "<group>"; };
+		FAFE83AC2E186E8A007EF21E /* CustomTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabView.swift; sourceTree = "<group>"; };
+		FAFE83AD2E186E8A007EF21E /* RowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
+		FAFE83AF2E186E8A007EF21E /* BluetoothConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothConnectedView.swift; sourceTree = "<group>"; };
+		FAFE83B02E186E8A007EF21E /* BluetoothDisabledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothDisabledView.swift; sourceTree = "<group>"; };
+		FAFE83B12E186E8A007EF21E /* BluetoothDisconnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothDisconnectedView.swift; sourceTree = "<group>"; };
+		FAFE83B22E186E8A007EF21E /* LoadingWheel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingWheel.swift; sourceTree = "<group>"; };
+		FAFE83B42E186E8A007EF21E /* MyDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDeviceView.swift; sourceTree = "<group>"; };
+		FAFE83B62E186E8A007EF21E /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		FAFE83B72E186E8A007EF21E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FAFE83BB2E186E8A007EF21E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FAFE83BC2E186E8A007EF21E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FAFE83BD2E186E8A007EF21E /* Helping_Hand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Helping_Hand.entitlements; sourceTree = "<group>"; };
+		FAFE83BE2E186E8A007EF21E /* Helping_HandApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helping_HandApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		FA7AB61E2DFB3F9C0097E164 /* Helping Hand */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Helping Hand";
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FA7AB6192DFB3F9C0097E164 /* Frameworks */ = {
@@ -46,7 +86,7 @@
 		FA7AB6132DFB3F9C0097E164 = {
 			isa = PBXGroup;
 			children = (
-				FA7AB61E2DFB3F9C0097E164 /* Helping Hand */,
+				FAFE83BF2E186E8A007EF21E /* Helping Hand */,
 				FA7AB61D2DFB3F9C0097E164 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,6 +97,140 @@
 				FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FAFE83A02E186E8A007EF21E /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE839B2E186E8A007EF21E /* Central.swift */,
+				FAFE839C2E186E8A007EF21E /* CentralManager.swift */,
+				FAFE839D2E186E8A007EF21E /* Peripheral.swift */,
+				FAFE839E2E186E8A007EF21E /* Test.swift */,
+				FAFE839F2E186E8A007EF21E /* ViewController.swift */,
+			);
+			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		FAFE83A12E186E8A007EF21E /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A02E186E8A007EF21E /* Bluetooth */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		FAFE83A32E186E8A007EF21E /* ML */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A22E186E8A007EF21E /* Action.swift */,
+			);
+			path = ML;
+			sourceTree = "<group>";
+		};
+		FAFE83A52E186E8A007EF21E /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A42E186E8A007EF21E /* CBUUIDs.swift */,
+			);
+			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		FAFE83A82E186E8A007EF21E /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A62E186E8A007EF21E /* Entry.swift */,
+				FAFE83A72E186E8A007EF21E /* User.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		FAFE83AA2E186E8A007EF21E /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A92E186E8A007EF21E /* CustomTab.swift */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+		FAFE83AB2E186E8A007EF21E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A52E186E8A007EF21E /* Bluetooth */,
+				FAFE83A82E186E8A007EF21E /* Data */,
+				FAFE83AA2E186E8A007EF21E /* Menu */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		FAFE83AE2E186E8A007EF21E /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83AC2E186E8A007EF21E /* CustomTabView.swift */,
+				FAFE83AD2E186E8A007EF21E /* RowView.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		FAFE83B32E186E8A007EF21E /* Status */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83AF2E186E8A007EF21E /* BluetoothConnectedView.swift */,
+				FAFE83B02E186E8A007EF21E /* BluetoothDisabledView.swift */,
+				FAFE83B12E186E8A007EF21E /* BluetoothDisconnectedView.swift */,
+				FAFE83B22E186E8A007EF21E /* LoadingWheel.swift */,
+			);
+			path = Status;
+			sourceTree = "<group>";
+		};
+		FAFE83B52E186E8A007EF21E /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83B32E186E8A007EF21E /* Status */,
+				FAFE83B42E186E8A007EF21E /* MyDeviceView.swift */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
+		FAFE83B82E186E8A007EF21E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83B62E186E8A007EF21E /* AccountView.swift */,
+				FAFE83B72E186E8A007EF21E /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		FAFE83B92E186E8A007EF21E /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83B52E186E8A007EF21E /* Device */,
+				FAFE83B82E186E8A007EF21E /* Settings */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+		FAFE83BA2E186E8A007EF21E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83AE2E186E8A007EF21E /* Helper */,
+				FAFE83B92E186E8A007EF21E /* Menu */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FAFE83BF2E186E8A007EF21E /* Helping Hand */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE83A12E186E8A007EF21E /* Controllers */,
+				FAFE83A32E186E8A007EF21E /* ML */,
+				FAFE83AB2E186E8A007EF21E /* Model */,
+				FAFE83BA2E186E8A007EF21E /* Views */,
+				FAFE83BB2E186E8A007EF21E /* Assets.xcassets */,
+				FAFE83BC2E186E8A007EF21E /* ContentView.swift */,
+				FAFE83BD2E186E8A007EF21E /* Helping_Hand.entitlements */,
+				FAFE83BE2E186E8A007EF21E /* Helping_HandApp.swift */,
+			);
+			path = "Helping Hand";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +248,6 @@
 				FAFE83972E185B43007EF21E /* PBXBuildRule */,
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				FA7AB61E2DFB3F9C0097E164 /* Helping Hand */,
 			);
 			name = "Helping Hand";
 			packageProductDependencies = (
@@ -127,6 +298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAFE83D52E186E8A007EF21E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +309,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAFE83C02E186E8A007EF21E /* Central.swift in Sources */,
+				FAFE83C12E186E8A007EF21E /* CentralManager.swift in Sources */,
+				FAFE83C22E186E8A007EF21E /* Peripheral.swift in Sources */,
+				FAFE83C32E186E8A007EF21E /* Test.swift in Sources */,
+				FAFE83C42E186E8A007EF21E /* ViewController.swift in Sources */,
+				FAFE83C52E186E8A007EF21E /* Action.swift in Sources */,
+				FAFE83C62E186E8A007EF21E /* CBUUIDs.swift in Sources */,
+				FAFE83C72E186E8A007EF21E /* Entry.swift in Sources */,
+				FAFE83C82E186E8A007EF21E /* User.swift in Sources */,
+				FAFE83C92E186E8A007EF21E /* CustomTab.swift in Sources */,
+				FAFE83CA2E186E8A007EF21E /* CustomTabView.swift in Sources */,
+				FAFE83CB2E186E8A007EF21E /* RowView.swift in Sources */,
+				FAFE83CC2E186E8A007EF21E /* BluetoothConnectedView.swift in Sources */,
+				FAFE83CD2E186E8A007EF21E /* BluetoothDisabledView.swift in Sources */,
+				FAFE83CE2E186E8A007EF21E /* BluetoothDisconnectedView.swift in Sources */,
+				FAFE83CF2E186E8A007EF21E /* LoadingWheel.swift in Sources */,
+				FAFE83D02E186E8A007EF21E /* MyDeviceView.swift in Sources */,
+				FAFE83D12E186E8A007EF21E /* AccountView.swift in Sources */,
+				FAFE83D22E186E8A007EF21E /* SettingsView.swift in Sources */,
+				FAFE83D32E186E8A007EF21E /* ContentView.swift in Sources */,
+				FAFE83D42E186E8A007EF21E /* Helping_HandApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,7 +476,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
@@ -325,7 +518,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
