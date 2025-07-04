@@ -1,4 +1,4 @@
-name: Deploy DocC
+name: Deploy DocC Documentation to GitHub Pages
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -18,53 +18,39 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-latest
-
+    runs-on: macos-13 # or macos-14 if needed for latest Xcode
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Select Xcode 15.4
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+      - name: Set Xcode version (Swift 6 compatible)
+        run: sudo xcode-select -s /Applications/Xcode_15.3.app
 
-      - name: Verify Xcode version
-        run: xcodebuild -version
-
-      - name: Fix Xcode project (if corrupted)
-        run: |
-          if [ -f "Helping Hand.xcodeproj/project.pbxproj" ]; then
-            # Backup the project file
-            cp "Helping Hand.xcodeproj/project.pbxproj" "Helping Hand.xcodeproj/project.pbxproj.bak"
-            # Remove potential merge markers
-            sed -i '' '/^<<<<<<</,/^>>>>>>>/d' "Helping Hand.xcodeproj/project.pbxproj"
-            sed -i '' '/^=======$/d' "Helping Hand.xcodeproj/project.pbxproj"
-          else
-            echo "❌ ERROR: project.pbxproj not found!"
-            exit 1
-          fi
+      - name: Resolve Swift dependencies
+        run: swift package resolve
 
       - name: Build DocC documentation
         run: |
-          set -euo pipefail
+          DOCC_ARCHIVE_PATH=.build/plugins/HelpingHand.doccarchive
+          OUTPUT_PATH=docs
+          BASE_PATH=helping-hand-docs
 
-          xcodebuild docbuild \
-            -project "Helping Hand.xcodeproj" \
-            -scheme "Helping Hand" \
-            -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=iOS'
+          # Generate docc archive
+          swift package --allow-writing-to-directory $OUTPUT_PATH \
+            generate-documentation \
+            --target HelpingHand \
+            --disable-indexing \
+            --transform-for-static-hosting \
+            --hosting-base-path $BASE_PATH \
+            --output-path $OUTPUT_PATH
 
-          ARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
-          MODULE_NAME=$(find "$ARCHIVE_PATH/data/documentation" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | head -n1)
+          echo '<meta http-equiv="refresh" content="0; url=helping-hand-docs/documentation/helpinghand">' > $OUTPUT_PATH/index.html
 
-          DOCC_PATH=$(xcrun --find docc)
-          "$DOCC_PATH" process-archive \
-            transform-for-static-hosting "$ARCHIVE_PATH" \
-            --hosting-base-path "" \
-            --output-path docs
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'docs'
 
-          echo "<!DOCTYPE html>
-          <html>
-            <head>
-              <meta http-equiv=\"refresh\" content=\"0; url='/documentation/$MODULE_NAME'\" />
-            </head>
- 
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
