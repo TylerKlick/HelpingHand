@@ -47,7 +47,7 @@ jobs:
           echo '<meta http-equiv="refresh" content="0; url=helping-hand-docs/documentation/helpinghand">' > $OUTPUT_PATH/index.html
 
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs'
 
