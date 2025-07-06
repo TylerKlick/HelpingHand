@@ -30,18 +30,18 @@ jobs:
       - name: Select Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.2.0'
+          xcode-version: '16.x'
 
       - name: Build DocC
         run: |
           PROJECT_PATH="Helping Hand.xcodeproj"
 
-          # Use iOS SIMULATOR destination to avoid signing issues
+          # Use a stable, simulator-compatible destination
           xcodebuild docbuild \
             -project "$PROJECT_PATH" \
             -scheme "Helping Hand" \
             -derivedDataPath /tmp/docbuild \
-            -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device'
 
           DOCARCHIVE_NAME="Helping_Hand.doccarchive"
 
@@ -55,13 +55,13 @@ jobs:
               exit 1
           fi
 
-          # Convert to static web-compatible format
+          # Transform to static website for GitHub Pages
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_FULL_PATH" \
             --output-path docs \
             --hosting-base-path 'HelpingHand'
 
-          # Redirect root to main documentation page
+          # Redirect index.html to the documentation home
           echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
 
       - name: Upload artifact
