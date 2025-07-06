@@ -12,10 +12,10 @@ permissions:
 jobs:
   macos:
     runs-on: macos-14
-    name: macOS
+    name: Build and Deploy DocC
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install Swift 6
@@ -27,17 +27,22 @@ jobs:
       - name: Confirm Swift version
         run: swift --version
 
-      - name: Build DocC
+      - name: Build DocC archive
         run: |
-          mkdir -p docs
-          swift package --allow-writing-to-directory ./docs \
-            generate-documentation \
-            --target YourTargetName \
-            --output-path ./docs \
-            --transform-for-static-hosting \
-            --hosting-base-path your-docc-path # e.g., HelpingHandDocs
+          DOC_OUTPUT_PATH=docs
+          mkdir -p $DOC_OUTPUT_PATH
 
-      - name: Upload artifact
+          xcodebuild doc \
+            -project "Helping Hand.xcodeproj" \
+            -scheme "Helping Hand" \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
+            -derivedDataPath .build \
+            -enableCodeCoverage NO \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path HelpingHandDocs --output-path $DOC_OUTPUT_PATH"
+
+      - name: Upload DocC site as artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
