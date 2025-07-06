@@ -27,8 +27,28 @@ jobs:
       - name: Build DocC
         run: |
           PROJECT_PATH="Helping Hand.xcodeproj"
-          xcodebuild docbuild -project "$PROJECT_PATH" -scheme "Helping Hand" -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
+          xcodebuild docbuild \
+            -project "$PROJECT_PATH" \
+            -scheme "Helping Hand" \
+            -derivedDataPath /tmp/docbuild \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            # Optional: If you see issues related to provisioning profiles even after the above
+            # -allowProvisioningUpdates # This could potentially help with automatic signing if needed, but CODE_SIGNING_REQUIRED=NO is usually enough.
+          
           DOCARCHIVE_NAME="Helping_Hand.doccarchive"
+          
+          # Add a debug step to list contents of the derived data
+          echo "--- Listing contents of DerivedData Products Directory ---"
+          ls -F /tmp/docbuild/Build/Products/Debug-iphoneos/
+          
+          # Verify the DocC archive exists before processing
+          if [ ! -d "/tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME" ]; then
+              echo "Error: DocC archive not found at /tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME"
+              exit 1
+          fi
+
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "/tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME" \
             --output-path docs \
