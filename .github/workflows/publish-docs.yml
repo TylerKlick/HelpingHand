@@ -21,48 +21,52 @@ jobs:
     runs-on: macos-14
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/configure-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - name: Select Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.2.0'
 
-      - name: Pre-boot Simulator
-        run: |
-          echo "Booting iOS Simulator to avoid race conditions..."
-          xcrun simctl boot "iPhone 14" || echo "Already booted"
-          sleep 5
-
       - name: Build DocC
         run: |
+          DOC_SCHEME="HelpingHandDocumentation"
           PROJECT_PATH="Helping Hand.xcodeproj"
+          DERIVED_DATA="/tmp/docbuild"
+
+          # Build the documentation archive
           xcodebuild docbuild \
             -project "$PROJECT_PATH" \
-            -scheme "Helping Hand" \
-            -derivedDataPath /tmp/docbuild \
+            -scheme "$DOC_SCHEME" \
+            -derivedDataPath "$DERIVED_DATA" \
             -destination 'generic/platform=iOS Simulator'
 
-          DOCARCHIVE_NAME="Helping_Hand.doccarchive"
-          DOCARCHIVE_FULL_PATH=$(find /tmp/docbuild -name "$DOCARCHIVE_NAME" -print -quit)
+          # Locate the generated .doccarchive
+          DOCARCHIVE_PATH=$(find "$DERIVED_DATA" -name "*.doccarchive" -print -quit)
 
-          if [ -z "$DOCARCHIVE_FULL_PATH" ]; then
-            echo "Error: '$DOCARCHIVE_NAME' not found"
-            exit 1
+          if [ -z "$DOCARCHIVE_PATH" ]; then
+              echo "Error: No .doccarchive found."
+              exit 1
           fi
 
+          # Transform into a static DocC site
           xcrun docc process-archive \
-            transform-for-static-hosting "$DOCARCHIVE_FULL_PATH" \
+            transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --output-path docs \
             --hosting-base-path 'HelpingHand'
 
+          # Redirect to main documentation entry point
           echo '<script>window.location.href += "/documentation/helpinghand"</script>' > docs/index.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
       - id: deployment
+        name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
