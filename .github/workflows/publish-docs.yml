@@ -34,33 +34,28 @@ jobs:
 
       - name: Build DocC
         run: |
-          DOC_SCHEME="HelpingHandDocumentation"
           PROJECT_PATH="Helping Hand.xcodeproj"
-          DERIVED_DATA="/tmp/docbuild"
 
-          # Build the documentation archive
           xcodebuild docbuild \
             -project "$PROJECT_PATH" \
-            -scheme "$DOC_SCHEME" \
-            -derivedDataPath "$DERIVED_DATA" \
+            -scheme "Helping Hand" \
+            -derivedDataPath /tmp/docbuild \
             -destination 'generic/platform=iOS Simulator'
 
-          # Locate the generated .doccarchive
-          DOCARCHIVE_PATH=$(find "$DERIVED_DATA" -name "*.doccarchive" -print -quit)
+          DOCARCHIVE_NAME="Helping_Hand.doccarchive"
+          DOCARCHIVE_FULL_PATH=$(find /tmp/docbuild -name "$DOCARCHIVE_NAME" -print -quit)
 
-          if [ -z "$DOCARCHIVE_PATH" ]; then
-              echo "Error: No .doccarchive found."
+          if [ -z "$DOCARCHIVE_FULL_PATH" ]; then
+              echo "Error: DocC archive '$DOCARCHIVE_NAME' not found."
               exit 1
           fi
 
-          # Transform into a static DocC site
-          xcrun docc process-archive \
-            transform-for-static-hosting "$DOCARCHIVE_PATH" \
+          $(xcrun --find docc) process-archive \
+            transform-for-static-hosting "$DOCARCHIVE_FULL_PATH" \
             --output-path docs \
             --hosting-base-path 'HelpingHand'
 
-          # Redirect to main documentation entry point
-          echo '<script>window.location.href += "/documentation/helpinghand"</script>' > docs/index.html
+          echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
