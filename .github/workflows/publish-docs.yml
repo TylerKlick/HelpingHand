@@ -35,39 +35,59 @@ jobs:
       - name: Build DocC
         run: |
           DERIVED_DATA_PATH="/tmp/docbuild"
-          DOC_OUTPUT_DIR="docs"
-          MODULE_NAME="HelpingHand"
-          HOSTING_BASE_PATH="HelpingHand"
-      
-          rm -rf "$DERIVED_DATA_PATH" "$DOC_OUTPUT_DIR"
-      
+          TEMP_DOCS_OUTPUT_PATH="/tmp/processed_docs"
+          FINAL_DOCS_DIR="docs"
+
+          rm -rf "$DERIVED_DATA_PATH" "$TEMP_DOCS_OUTPUT_PATH" "$FINAL_DOCS_DIR"
+          mkdir -p "$FINAL_DOCS_DIR"
+
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
-            -scheme "$MODULE_NAME" \
+            -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
-            -destination "generic/platform=iOS Simulator" \
+            -destination 'generic/platform=iOS Simulator' \
             -allowProvisioningUpdates
-      
+
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
-      
+
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "Error: No .doccarchive found. Exiting."
+            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
           fi
-      
+
+          echo "Found .doccarchive at: $DOCARCHIVE_PATH"
+
+          GITHUB_PAGES_BASE_PATH="/HelpingHand"
+
           xcrun docc process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
-            --output-path "$DOC_OUTPUT_DIR" \
-            --hosting-base-path "$HOSTING_BASE_PATH" \
-            --output-format static-hosting
-      
-          echo "<script>window.location.href += '/documentation/$(echo "$MODULE_NAME" | tr '[:upper:]' '[:lower:]')'</script>" > "$DOC_OUTPUT_DIR/index.html"
+            --output-path "$TEMP_DOCS_OUTPUT_PATH" \
+            --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-      - name: Upload Artifact         
+          DOC_CONTENT_SOURCE="$TEMP_DOCS_OUTPUT_PATH/documentation/helpinghand"
+          cp -R "$TEMP_DOCS_OUTPUT_PATH"/* "$FINAL_DOCS_DIR"/
+
+          if [ ! -d "$DOC_CONTENT_SOURCE" ]; then
+            echo "Error: Expected DocC content not found at $DOC_CONTENT_SOURCE."
+            echo "Copying the entire processed output from $TEMP_DOCS_OUTPUT_PATH to $FINAL_DOCS_DIR as a fallback."
+            cp -R "$TEMP_DOCS_OUTPUT_PATH"/* "$FINAL_DOCS_DIR"/
+          DOC_MODULE_INDEX_PATH="$TEMP_DOCS_OUTPUT_PATH/documentation/helpinghand/index.html"
+
+          if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
+            echo "Replacing root index.html with module's index.html to ensure direct access."
+            cp "$DOC_MODULE_INDEX_PATH" "$FINAL_DOCS_DIR/index.html"
+          else
+            echo "Moving DocC content from $DOC_CONTENT_SOURCE to $FINAL_DOCS_DIR."
+            cp -R "$DOC_CONTENT_SOURCE"/* "$FINAL_DOCS_DIR"/
+            echo "Warning: Module's index.html not found at $DOC_MODULE_INDEX_PATH. The root index.html might still be a redirect."
+            echo "Please verify the structure of DocC output in $TEMP_DOCS_OUTPUT_PATH."
+          fi
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
-          
+          path: docs
+
       - id: deployment
         name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
