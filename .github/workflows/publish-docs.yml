@@ -34,28 +34,46 @@ jobs:
 
       - name: Build and Process DocC
         run: |
+          DERIVED_DATA_PATH="/tmp/docbuild"
+          TEMP_DOCS_OUTPUT_PATH="/tmp/processed_docs"
+          FINAL_DOCS_DIR="docs"
+
+          rm -rf "$DERIVED_DATA_PATH" "$TEMP_DOCS_OUTPUT_PATH" "$FINAL_DOCS_DIR"
+          mkdir -p "$FINAL_DOCS_DIR"
+
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
             -scheme "Helping Hand" \
-            -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=iOS Simulator'
+            -derivedDataPath "$DERIVED_DATA_PATH" \
+            -destination 'generic/platform=iOS Simulator' \
+            -allowProvisioningUpdates
 
-          echo "Searching for .doccarchive in /tmp/docbuild..."
-          DOCARCHIVE_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
+          DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "Error: No .doccarchive found."
+            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
           fi
 
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
 
+          GITHUB_PAGES_BASE_PATH="/HelpingHand"
+
           xcrun docc process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
-            --output-path docs \
-            --hosting-base-path "HelpingHand"
+            --output-path "$TEMP_DOCS_OUTPUT_PATH" \
+            --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
+          DOC_CONTENT_SOURCE="$TEMP_DOCS_OUTPUT_PATH/documentation/helpinghand"
+
+          if [ ! -d "$DOC_CONTENT_SOURCE" ]; then
+            echo "Error: Expected DocC content not found at $DOC_CONTENT_SOURCE."
+            echo "Copying the entire processed output from $TEMP_DOCS_OUTPUT_PATH to $FINAL_DOCS_DIR as a fallback."
+            cp -R "$TEMP_DOCS_OUTPUT_PATH"/* "$FINAL_DOCS_DIR"/
+          else
+            echo "Moving DocC content from $DOC_CONTENT_SOURCE to $FINAL_DOCS_DIR."
+            cp -R "$DOC_CONTENT_SOURCE"/* "$FINAL_DOCS_DIR"/
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
