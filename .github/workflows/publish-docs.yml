@@ -23,7 +23,7 @@ jobs:
       - name: Select Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.x'
+          xcode-version: '16.2.0'
       - name: Build DocC
         run: |
           PROJECT_PATH="Helping Hand.xcodeproj"
@@ -34,23 +34,28 @@ jobs:
             -destination 'generic/platform=iOS' \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            # Optional: If you see issues related to provisioning profiles even after the above
-            # -allowProvisioningUpdates # This could potentially help with automatic signing if needed, but CODE_SIGNING_REQUIRED=NO is usually enough.
+            # NEW: Clear entitlements for DocC build
+            CODE_SIGN_ENTITLEMENTS=""
           
+          # Check if the doccarchive exists before processing
           DOCARCHIVE_NAME="Helping_Hand.doccarchive"
           
-          # Add a debug step to list contents of the derived data
           echo "--- Listing contents of DerivedData Products Directory ---"
-          ls -F /tmp/docbuild/Build/Products/Debug-iphoneos/
-          
-          # Verify the DocC archive exists before processing
-          if [ ! -d "/tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME" ]; then
-              echo "Error: DocC archive not found at /tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME"
+          # List the contents of the *specific* build products directory
+          # The path might vary slightly, so check recursively for .doccarchive
+          find /tmp/docbuild -name "*.doccarchive" -print
+
+          DOCARCHIVE_FULL_PATH=$(find /tmp/docbuild -name "$DOCARCHIVE_NAME" -print -quit)
+
+          if [ -z "$DOCARCHIVE_FULL_PATH" ]; then
+              echo "Error: DocC archive '$DOCARCHIVE_NAME' not found in derived data."
+              echo "Contents of /tmp/docbuild/Build/Products/Debug-iphoneos/:"
+              ls -F /tmp/docbuild/Build/Products/Debug-iphoneos/ || true # List if directory exists
               exit 1
           fi
 
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting "/tmp/docbuild/Build/Products/Debug-iphoneos/$DOCARCHIVE_NAME" \
+            transform-for-static-hosting "$DOCARCHIVE_FULL_PATH" \
             --output-path docs \
             --hosting-base-path 'HelpingHand';
           echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html;
