@@ -34,26 +34,26 @@ jobs:
 
       - name: Build DocC
         run: |
-          PROJECT_PATH="Helping Hand.xcodeproj"
-
           xcodebuild docbuild \
-            -project "$PROJECT_PATH" \
-            -scheme "Helping Hand" \
+            -project "Helping Hand.xcodeproj" \
+            -scheme "HelpingHandDocumentation" \
             -derivedDataPath /tmp/docbuild \
             -destination 'generic/platform=iOS Simulator'
 
-          DOCARCHIVE_NAME="Helping_Hand.doccarchive"
-          DOCARCHIVE_FULL_PATH=$(find /tmp/docbuild -name "$DOCARCHIVE_NAME" -print -quit)
+          echo "Searching for .doccarchive in /tmp/docbuild..."
+          DOCARCHIVE_FULL_PATH=$(find /tmp/docbuild -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_FULL_PATH" ]; then
-              echo "Error: DocC archive '$DOCARCHIVE_NAME' not found."
+              echo "Error: No .doccarchive found."
               exit 1
           fi
 
-          $(xcrun --find docc) process-archive \
+          echo "Found .doccarchive at: $DOCARCHIVE_FULL_PATH"
+
+          xcrun docc process-archive \
             transform-for-static-hosting "$DOCARCHIVE_FULL_PATH" \
             --output-path docs \
-            --hosting-base-path 'HelpingHand'
+            --hosting-base-path "HelpingHand"
 
           echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
 
