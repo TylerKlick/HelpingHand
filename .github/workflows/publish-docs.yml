@@ -1,4 +1,5 @@
-name: Deploy DocC
+
+name: DocC Runner
 
 on:
   push:
@@ -9,14 +10,31 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  macos:
-    runs-on: macos-14
+  deploy:
     name: Build and Deploy DocC
+    runs-on: macos-15
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
+
+      - name: Setup GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Select Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
 
       - name: Install Swift 6
         uses: tayloraswift/swift-install-action@master
@@ -24,38 +42,26 @@ jobs:
           swift-prefix: "swift-6.0-release/xcode/swift-6.0-RELEASE"
           swift-id: "swift-6.0-RELEASE"
 
-      - name: Confirm Swift version
-        run: swift --version
-
-      - name: Build DocC archive
+      - name: Generate DocC Documentation
         run: |
-          DOC_OUTPUT_PATH=docs
-          mkdir -p $DOC_OUTPUT_PATH
+          DOC_OUTPUT_DIR=".build/docs-iOS"
+          mkdir -p "$DOC_OUTPUT_DIR"
 
-          xcodebuild doc \
-            -project "Helping Hand.xcodeproj" \
-            -scheme "Helping Hand" \
-            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
-            -derivedDataPath .build \
-            -enableCodeCoverage NO \
-            -skipPackagePluginValidation \
-            -skipMacroValidation \
-            OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path HelpingHandDocs --output-path $DOC_OUTPUT_PATH"
+          # Replace 'HelpingHand' with your SwiftPM target name
+          swift package \
+            --allow-writing-to-directory "$DOC_OUTPUT_DIR" \
+            generate-documentation \
+            --target HelpingHand \
+            --output-path "$DOC_OUTPUT_DIR" \
+            --transform-for-static-hosting \
+            --hosting-base-path ${{ github.event.repository.name }} \
+            --disable-indexing
 
-      - name: Upload DocC site as artifact
+      - name: Upload DocC Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: ".build/docs-iOS"
 
-  deploy:
-    needs: macos
-    runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
