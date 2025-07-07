@@ -68,10 +68,11 @@ jobs:
           DOC_MODULE_INDEX_PATH=$(find "$TEMP_DOCS_OUTPUT_PATH/documentation" -type f -name index.html | head -n 1)
 
           if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
-            echo "Replacing root index.html with module's index.html to ensure direct access."
-            cp "$DOC_MODULE_INDEX_PATH" "$FINAL_DOCS_DIR/index.html"
+            MODULE_PATH=$(dirname "${DOC_MODULE_INDEX_PATH##$TEMP_DOCS_OUTPUT_PATH/}")
+            echo "Redirecting root index.html to: $MODULE_PATH/index.html"
+            echo "<meta http-equiv=\"refresh\" content=\"0; url=${MODULE_PATH}/index.html\">" > "$FINAL_DOCS_DIR/index.html"
           else
-            echo "Warning: Module's index.html not found. The root index.html might still be a redirect."
+            echo "Warning: Module index.html not found. The root index.html might not redirect."
           fi
 
       - name: Upload artifact
