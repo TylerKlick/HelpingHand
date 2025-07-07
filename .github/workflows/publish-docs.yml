@@ -18,7 +18,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
       - name: Checkout
@@ -27,34 +27,26 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Select Xcode 15.1 # Using Xcode version from the example script
+      - name: Select Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.1.0'
+          xcode-version: '16.*'
 
       - name: Build and Process DocC
         run: |
-          # Define paths for derived data, final documentation, and GitHub Pages base path
           DERIVED_DATA_PATH="/tmp/docbuild"
           FINAL_DOCS_DIR="docs"
-          # The base path for GitHub Pages, typically the repository name
           GITHUB_PAGES_BASE_PATH="/HelpingHand" 
 
-          # Clean up previous build artifacts and create the output directory
           rm -rf "$DERIVED_DATA_PATH" "$FINAL_DOCS_DIR"
           mkdir -p "$FINAL_DOCS_DIR"
 
-          # Build the DocC archive using xcodebuild
-          # -project and -scheme are kept from your original workflow
-          # -destination is updated to 'generic/platform=iOS' as in the example
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
             -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             -destination 'generic/platform=iOS'
-
-          # Find the generated .doccarchive within the derived data path
-          # This is a robust way to locate the archive, as its exact subpath can vary
+            
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           # Check if the .doccarchive was found
@@ -65,25 +57,16 @@ jobs:
 
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
 
-          # Process the DocC archive for static hosting
-          # Uses $(xcrun --find docc) for robustness as in the example
-          # --output-path is set to the final documentation directory ('docs')
-          # --hosting-base-path is set to your GitHub Pages base path
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          # Create a root index.html to redirect to the main documentation module
-          # DocC typically generates documentation/<ModuleName>/index.html
-          # We dynamically find the module's index.html to ensure correct redirection
           DOC_MODULE_INDEX_PATH=$(find "$FINAL_DOCS_DIR/documentation" -type f -name index.html | head -n 1)
 
           if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
-            # Extract the relative path to the module's index.html (e.g., 'documentation/Helping_Hand/index.html')
             MODULE_RELATIVE_PATH="${DOC_MODULE_INDEX_PATH##$FINAL_DOCS_DIR/}"
             echo "Redirecting root index.html to: $MODULE_RELATIVE_PATH"
-            # Create an index.html with a JavaScript redirect, similar to the example
             echo "<script>window.location.href = window.location.origin + '$GITHUB_PAGES_BASE_PATH/${MODULE_RELATIVE_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
           else
             echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. The root index.html might not redirect automatically."
@@ -93,7 +76,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs' # Upload the 'docs' directory as the artifact
+          path: 'docs'
 
       - id: deployment
         name: Deploy to GitHub Pages
