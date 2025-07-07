@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-14
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Pages
@@ -37,13 +37,14 @@ jobs:
           DERIVED_DATA_PATH="/tmp/docbuild"
           TEMP_DOCS_OUTPUT_PATH="/tmp/processed_docs"
           FINAL_DOCS_DIR="docs"
+          GITHUB_PAGES_BASE_PATH="/HelpingHand"
 
           rm -rf "$DERIVED_DATA_PATH" "$TEMP_DOCS_OUTPUT_PATH" "$FINAL_DOCS_DIR"
           mkdir -p "$FINAL_DOCS_DIR"
 
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
-            -scheme "Helping Hand" \
+            -scheme "HelpingHandDocumentation" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             -destination 'generic/platform=iOS Simulator' \
             -allowProvisioningUpdates
@@ -51,13 +52,11 @@ jobs:
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
+            echo "❌ Error: No .doccarchive found. Exiting."
             exit 1
           fi
 
-          echo "Found .doccarchive at: $DOCARCHIVE_PATH"
-
-          GITHUB_PAGES_BASE_PATH="/HelpingHand"
+          echo "✅ Found .doccarchive at: $DOCARCHIVE_PATH"
 
           xcrun docc process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
@@ -66,14 +65,12 @@ jobs:
 
           cp -R "$TEMP_DOCS_OUTPUT_PATH"/* "$FINAL_DOCS_DIR"/
 
-          DOC_MODULE_INDEX_PATH="$TEMP_DOCS_OUTPUT_PATH/documentation/helpinghand/index.html"
-
-          if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
-            echo "Replacing root index.html with module's index.html to ensure direct access."
-            cp "$DOC_MODULE_INDEX_PATH" "$FINAL_DOCS_DIR/index.html"
+          MODULE_INDEX=$(find "$TEMP_DOCS_OUTPUT_PATH/documentation" -name "index.html" | head -n 1)
+          if [ -f "$MODULE_INDEX" ]; then
+            echo "✅ Replacing root index.html with module index.html"
+            cp "$MODULE_INDEX" "$FINAL_DOCS_DIR/index.html"
           else
-            echo "Warning: Module's index.html not found at $DOC_MODULE_INDEX_PATH. The root index.html might still be a redirect."
-            echo "Please verify the structure of DocC output in $TEMP_DOCS_OUTPUT_PATH."
+            echo "⚠️ Warning: Module index.html not found; root index.html might be a redirect."
           fi
 
       - name: Upload artifact
