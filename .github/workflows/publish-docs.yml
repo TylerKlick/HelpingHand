@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -68,15 +69,20 @@ jobs:
           echo "Checking for data.mdb file (contains actual content):"
           find "$DOCARCHIVE_PATH" -name "data.mdb" -exec ls -la {} \;
           
-          echo "Processing archive with verbose output..."
+          echo "Processing archive..."
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --hosting-base-path HelpingHand \
-            --output-path docs \
-            --verbose || echo "Process archive failed"
+            --output-path docs
           
-          echo "Creating redirect at root to /documentation/"
-          echo "<script>window.location.href = '/HelpingHand/documentation/'</script>" > docs/index.html
+          if [ $? -eq 0 ]; then
+            echo "Archive processed successfully"
+            echo "Creating redirect at root to /documentation/"
+            echo "<script>window.location.href = '/HelpingHand/documentation/'</script>" > docs/index.html
+          else
+            echo "Archive processing failed"
+            exit 1
+          fi
           
           echo "Contents of docs directory:"
           find docs -type f -name "*.html" | head -20
