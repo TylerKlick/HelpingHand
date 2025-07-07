@@ -17,9 +17,10 @@ jobs:
 
           echo "--- Creating dummy DocC structure ---"
           rm -rf "$FINAL_DOCS_DIR"
-          mkdir -p "$FINAL_DOCS_DIR/documentation/$DUMMY_MODULE_NAME"
+          mkdir -p "$FINAL_DOCS_DIR/documentation/$DUMMY_MODULE_NAME/data" # Ensure 'data' directory is created
           mkdir -p "$FINAL_DOCS_DIR/css"
           mkdir -p "$FINAL_DOCS_DIR/js"
+          mkdir -p "$FINAL_DOCS_DIR/images" # Ensure 'images' directory is created
 
           # Create dummy index.html files
           echo "<!DOCTYPE html><html><body><h1>Dummy Root Index</h1><script>window.location.href = window.location.origin + '/MyRepoName/documentation/$DUMMY_MODULE_NAME/index.html';</script></body></html>" > "$FINAL_DOCS_DIR/index.html"
