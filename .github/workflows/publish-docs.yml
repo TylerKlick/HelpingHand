@@ -67,10 +67,6 @@ jobs:
             --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          REDIRECT_PATH="${GITHUB_PAGES_BASE_PATH}/index.html"
-          echo "Redirecting root index.html to: ${REDIRECT_PATH}"
-          echo "<script>window.location.href = window.location.origin + '${REDIRECT_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
-
           echo "--- Contents of the final 'docs' directory for artifact upload ---"
           ls -R "$FINAL_DOCS_DIR" > "$LS_OUTPUT_FILE"
           echo "Captured 'docs' directory structure to $LS_OUTPUT_FILE"
