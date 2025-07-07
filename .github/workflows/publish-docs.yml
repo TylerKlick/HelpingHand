@@ -35,51 +35,33 @@ jobs:
 
       - name: Build DocC
         run: |
-          echo "Building documentation..."
           xcodebuild docbuild -scheme "Helping Hand" \
             -project "Helping Hand.xcodeproj" \
             -derivedDataPath /tmp/docbuild \
             -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+            CODE_SIGNING_ALLOWED=NO
           
           echo "Looking for .doccarchive files..."
-          find /tmp/docbuild -name "*.doccarchive" -type d
+          find /tmp/docbuild -name "*.doccarchive"
           
           DOCARCHIVE_PATH=$(find /tmp/docbuild -type d -name "*.doccarchive" -print -quit)
           
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found. Exiting."
-            find /tmp/docbuild -type f -name "*" | head -20
             exit 1
           fi
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
           
-          echo "Contents of .doccarchive:"
-          ls -la "$DOCARCHIVE_PATH"
-          find "$DOCARCHIVE_PATH" -type f | head -10
-          
-          echo "Checking for data.mdb file (contains actual content):"
-          find "$DOCARCHIVE_PATH" -name "data.mdb" -exec ls -la {} \;
-          
-          echo "Processing archive with verbose output..."
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --hosting-base-path HelpingHand \
-            --output-path docs \
-            --verbose || echo "Process archive failed"
+            --output-path docs
           
           echo "Contents of docs directory:"
           find docs -type f -name "*.html" | head -20
           ls -la docs/
-          
-          echo "Checking if main documentation files exist:"
-          ls -la docs/documentation/ || echo "No documentation directory found"
-          
-          echo "Contents of any HTML files:"
-          find docs -name "*.html" -exec wc -l {} \;
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
