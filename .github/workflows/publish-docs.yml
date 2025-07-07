@@ -1,4 +1,4 @@
-name: worksapce
+name: workspace
 
 on:
   push:
@@ -20,19 +20,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-14
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
+      
       - name: Select Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.*'
-
+      
       - name: Build DocC
         run: |
           xcodebuild docbuild -scheme "Helping Hand" \
@@ -47,11 +46,11 @@ jobs:
           find /tmp/docbuild -name "*.doccarchive"
           
           DOCARCHIVE_PATH=$(find /tmp/docbuild -type d -name "*.doccarchive" -print -quit)
-          
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found. Exiting."
             exit 1
           fi
+          
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
           
           $(xcrun --find docc) process-archive \
@@ -62,12 +61,27 @@ jobs:
           echo "Contents of docs directory:"
           find docs -type f -name "*.html" | head -20
           ls -la docs/
-
+      
+      - name: Create redirect index
+        run: |
+          cat > docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Helping Hand Documentation</title>
+            <meta http-equiv = "refresh" content = "0; url = ./documentation/helping_hand/" />
+          </head>
+          <body>
+            <p>Redirecting...</p>
+          </body>
+          </html>
+          EOF
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs'
-
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
