@@ -43,7 +43,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
           
-          DOCARCHIVE_PATH="Documentation.docc"
+          DOCARCHIVE_PATH=$(find /tmp/docbuild -type d -name "*.doccarchive" -print -quit)
           
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found. Exiting."
