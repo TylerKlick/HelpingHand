@@ -1,13 +1,16 @@
-# ``Helping Hand``
+# ``HelpingHand``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+A brief description of your app or framework.
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+Detailed description of what your project does.
 
 ## Topics
 
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
+### Getting Started
+- <doc:GettingStarted>
 
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+### Classes
+- ``YourMainClass``
+- ``AnotherClass``
