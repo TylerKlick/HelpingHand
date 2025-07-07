@@ -33,14 +33,14 @@ jobs:
           xcode-version: '16.*'
 
       - name: Build and Process DocC
-        id: build_docc # Added an ID to this step to reference its outputs
+        id: build_docc
         run: |
-          set -x # Enable shell debugging
+          set -x
 
           DERIVED_DATA_PATH="/tmp/docbuild"
           FINAL_DOCS_DIR="docs"
           GITHUB_PAGES_BASE_PATH="/HelpingHand" 
-          LS_OUTPUT_FILE="docs_structure.txt" # Define the output file for ls -R
+          LS_OUTPUT_FILE="docs_structure.txt"
 
           rm -rf "$DERIVED_DATA_PATH" "$FINAL_DOCS_DIR"
           mkdir -p "$FINAL_DOCS_DIR"
@@ -67,36 +67,24 @@ jobs:
             --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          DOC_MODULE_INDEX_PATH=$(find "$FINAL_DOCS_DIR/documentation" -type f -name index.html | head -n 1)
-
-          if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
-            MODULE_RELATIVE_PATH="${DOC_MODULE_INDEX_PATH##$FINAL_DOCS_DIR/}"
-            echo "Detected module index path: $DOC_MODULE_INDEX_PATH"
-            echo "Calculated relative module path for redirect: $MODULE_RELATIVE_PATH"
-            echo "Redirecting root index.html to: ${GITHUB_PAGES_BASE_PATH}/${MODULE_RELATIVE_PATH}"
-            echo "<script>window.location.href = window.location.origin + '$GITHUB_PAGES_BASE_PATH/${MODULE_RELATIVE_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
-          else
-            echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. This means the main documentation entry point could not be determined for redirection."
-            echo "Please verify the structure of the generated DocC output in the 'docs' directory."
-            echo "Contents of $FINAL_DOCS_DIR/documentation:"
-            ls -R "$FINAL_DOCS_DIR/documentation" || true # List contents for debugging
-          fi
+          REDIRECT_PATH="${GITHUB_PAGES_BASE_PATH}/index.html"
+          echo "Redirecting root index.html to: ${REDIRECT_PATH}"
+          echo "<script>window.location.href = window.location.origin + '${REDIRECT_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
 
           echo "--- Contents of the final 'docs' directory for artifact upload ---"
-          # Capture the ls -R output to a file
           ls -R "$FINAL_DOCS_DIR" > "$LS_OUTPUT_FILE"
           echo "Captured 'docs' directory structure to $LS_OUTPUT_FILE"
 
       - name: Upload DocC Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs' # This uploads your actual DocC output
+          path: 'docs'
 
       - name: Upload Docs Structure Log
         uses: actions/upload-artifact@v4
         with:
           name: docs-structure-log
-          path: docs_structure.txt # This uploads the file containing the ls -R output
+          path: docs_structure.txt
 
       - id: deployment
         name: Deploy to GitHub Pages
