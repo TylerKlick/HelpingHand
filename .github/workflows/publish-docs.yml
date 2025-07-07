@@ -34,6 +34,8 @@ jobs:
 
       - name: Build and Process DocC
         run: |
+          set -x # Enable shell debugging - prints every command executed
+
           DERIVED_DATA_PATH="/tmp/docbuild"
           FINAL_DOCS_DIR="docs"
           GITHUB_PAGES_BASE_PATH="/HelpingHand" 
@@ -50,11 +52,11 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
             
-          # More specific path for doccarchive within derived data
-          DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH/Build/Products/" -type d -name "*.doccarchive" -print -quit)
+          # More robust find for doccarchive, checking common locations
+          DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH/Build/Products/. Exiting."
+            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
           fi
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
@@ -77,8 +79,11 @@ jobs:
             echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. This means the main documentation entry point could not be determined for redirection."
             echo "Please verify the structure of the generated DocC output in the 'docs' directory."
             echo "Contents of $FINAL_DOCS_DIR/documentation:"
-            ls -R "$FINAL_DOCS_DIR/documentation" || true
+            ls -R "$FINAL_DOCS_DIR/documentation" || true # List contents for debugging
           fi
+
+          echo "--- Contents of the final 'docs' directory for artifact upload ---"
+          ls -R "$FINAL_DOCS_DIR" # List all contents of the 'docs' directory
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
