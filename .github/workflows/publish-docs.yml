@@ -33,12 +33,14 @@ jobs:
           xcode-version: '16.*'
 
       - name: Build and Process DocC
+        id: build_docc # Added an ID to this step to reference its outputs
         run: |
-          set -x # Enable shell debugging - prints every command executed
+          set -x # Enable shell debugging
 
           DERIVED_DATA_PATH="/tmp/docbuild"
           FINAL_DOCS_DIR="docs"
           GITHUB_PAGES_BASE_PATH="/HelpingHand" 
+          LS_OUTPUT_FILE="docs_structure.txt" # Define the output file for ls -R
 
           rm -rf "$DERIVED_DATA_PATH" "$FINAL_DOCS_DIR"
           mkdir -p "$FINAL_DOCS_DIR"
@@ -52,7 +54,6 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
             
-          # More robust find for doccarchive, checking common locations
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
@@ -66,7 +67,6 @@ jobs:
             --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          # Find the main module's index.html and set up redirect
           DOC_MODULE_INDEX_PATH=$(find "$FINAL_DOCS_DIR/documentation" -type f -name index.html | head -n 1)
 
           if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
@@ -83,12 +83,20 @@ jobs:
           fi
 
           echo "--- Contents of the final 'docs' directory for artifact upload ---"
-          ls -R "$FINAL_DOCS_DIR" # List all contents of the 'docs' directory
+          # Capture the ls -R output to a file
+          ls -R "$FINAL_DOCS_DIR" > "$LS_OUTPUT_FILE"
+          echo "Captured 'docs' directory structure to $LS_OUTPUT_FILE"
 
-      - name: Upload artifact
+      - name: Upload DocC Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
+          path: 'docs' # This uploads your actual DocC output
+
+      - name: Upload Docs Structure Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-structure-log
+          path: docs_structure.txt # This uploads the file containing the ls -R output
 
       - id: deployment
         name: Deploy to GitHub Pages
