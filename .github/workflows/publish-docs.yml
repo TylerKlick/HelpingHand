@@ -18,7 +18,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-latest
+    runs-on: macos-14 # Changed from macos-latest for consistency
 
     steps:
       - name: Checkout
@@ -46,11 +46,12 @@ jobs:
             -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             -destination 'generic/platform=iOS' \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO # Added flags to disable code signing
             
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
-          # Check if the .doccarchive was found
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
