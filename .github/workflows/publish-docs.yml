@@ -35,22 +35,32 @@ jobs:
 
       - name: Build DocC
         run: |
+          echo "Building documentation..."
           xcodebuild docbuild -scheme "Helping Hand" \
             -project "Helping Hand.xcodeproj" \
             -derivedDataPath /tmp/docbuild \
             -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+          
+          echo "Looking for .doccarchive files..."
+          find /tmp/docbuild -name "*.doccarchive" -type d
           
           DOCARCHIVE_PATH=$(find /tmp/docbuild -type d -name "*.doccarchive" -print -quit)
           
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found. Exiting."
+            find /tmp/docbuild -type f -name "*" | head -20
             exit 1
           fi
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
           
+          echo "Contents of .doccarchive:"
+          ls -la "$DOCARCHIVE_PATH"
+          
+          echo "Processing archive..."
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --hosting-base-path HelpingHand \
