@@ -53,7 +53,6 @@ jobs:
           
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
-            --hosting-base-path HelpingHand \
             --output-path docs
           echo "<script>window.location.href = \"/HelpingHand/documentation/helpinghand\"</script>" > docs/index.html
 
