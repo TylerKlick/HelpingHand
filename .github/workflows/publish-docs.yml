@@ -27,30 +27,37 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Select Xcode 16
+      - name: Select Xcode 15.1 # Using Xcode version from the example script
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.2.0'
+          xcode-version: '15.1.0'
 
       - name: Build and Process DocC
         run: |
+          # Define paths for derived data, final documentation, and GitHub Pages base path
           DERIVED_DATA_PATH="/tmp/docbuild"
-          TEMP_DOCS_OUTPUT_PATH="/tmp/processed_docs"
           FINAL_DOCS_DIR="docs"
-          GITHUB_PAGES_BASE_PATH="/HelpingHand"
+          # The base path for GitHub Pages, typically the repository name
+          GITHUB_PAGES_BASE_PATH="/HelpingHand" 
 
-          rm -rf "$DERIVED_DATA_PATH" "$TEMP_DOCS_OUTPUT_PATH" "$FINAL_DOCS_DIR"
+          # Clean up previous build artifacts and create the output directory
+          rm -rf "$DERIVED_DATA_PATH" "$FINAL_DOCS_DIR"
           mkdir -p "$FINAL_DOCS_DIR"
 
+          # Build the DocC archive using xcodebuild
+          # -project and -scheme are kept from your original workflow
+          # -destination is updated to 'generic/platform=iOS' as in the example
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
             -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
-            -destination 'generic/platform=iOS Simulator' \
-            -allowProvisioningUpdates
+            -destination 'generic/platform=iOS'
 
+          # Find the generated .doccarchive within the derived data path
+          # This is a robust way to locate the archive, as its exact subpath can vary
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
+          # Check if the .doccarchive was found
           if [ -z "$DOCARCHIVE_PATH" ]; then
             echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
@@ -58,27 +65,35 @@ jobs:
 
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
 
-          xcrun docc process-archive \
+          # Process the DocC archive for static hosting
+          # Uses $(xcrun --find docc) for robustness as in the example
+          # --output-path is set to the final documentation directory ('docs')
+          # --hosting-base-path is set to your GitHub Pages base path
+          $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
-            --output-path "$TEMP_DOCS_OUTPUT_PATH" \
+            --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
-          cp -R "$TEMP_DOCS_OUTPUT_PATH"/* "$FINAL_DOCS_DIR"/
-
-          DOC_MODULE_INDEX_PATH=$(find "$TEMP_DOCS_OUTPUT_PATH/documentation" -type f -name index.html | head -n 1)
+          # Create a root index.html to redirect to the main documentation module
+          # DocC typically generates documentation/<ModuleName>/index.html
+          # We dynamically find the module's index.html to ensure correct redirection
+          DOC_MODULE_INDEX_PATH=$(find "$FINAL_DOCS_DIR/documentation" -type f -name index.html | head -n 1)
 
           if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
-            MODULE_PATH=$(dirname "${DOC_MODULE_INDEX_PATH##$TEMP_DOCS_OUTPUT_PATH/}")
-            echo "Redirecting root index.html to: $MODULE_PATH/index.html"
-            echo "<meta http-equiv=\"refresh\" content=\"0; url=${MODULE_PATH}/index.html\">" > "$FINAL_DOCS_DIR/index.html"
+            # Extract the relative path to the module's index.html (e.g., 'documentation/Helping_Hand/index.html')
+            MODULE_RELATIVE_PATH="${DOC_MODULE_INDEX_PATH##$FINAL_DOCS_DIR/}"
+            echo "Redirecting root index.html to: $MODULE_RELATIVE_PATH"
+            # Create an index.html with a JavaScript redirect, similar to the example
+            echo "<script>window.location.href = window.location.origin + '$GITHUB_PAGES_BASE_PATH/${MODULE_RELATIVE_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
           else
-            echo "Warning: Module index.html not found. The root index.html might not redirect."
+            echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. The root index.html might not redirect automatically."
+            echo "Please ensure your project's DocC documentation generates a main module index.html."
           fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: 'docs' # Upload the 'docs' directory as the artifact
 
       - id: deployment
         name: Deploy to GitHub Pages
