@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-14
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Pages
@@ -44,7 +44,7 @@ jobs:
 
           xcodebuild docbuild \
             -project "Helping Hand.xcodeproj" \
-            -scheme "HelpingHandDocumentation" \
+            -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             -destination 'generic/platform=iOS Simulator' \
             -allowProvisioningUpdates
@@ -52,11 +52,11 @@ jobs:
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "❌ Error: No .doccarchive found. Exiting."
+            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
             exit 1
           fi
 
-          echo "✅ Found .doccarchive at: $DOCARCHIVE_PATH"
+          echo "Found .doccarchive at: $DOCARCHIVE_PATH"
 
           xcrun docc process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
@@ -67,10 +67,10 @@ jobs:
 
           MODULE_INDEX=$(find "$TEMP_DOCS_OUTPUT_PATH/documentation" -name "index.html" | head -n 1)
           if [ -f "$MODULE_INDEX" ]; then
-            echo "✅ Replacing root index.html with module index.html"
+            echo "Replacing root index.html with module index.html"
             cp "$MODULE_INDEX" "$FINAL_DOCS_DIR/index.html"
           else
-            echo "⚠️ Warning: Module index.html not found; root index.html might be a redirect."
+            echo "Warning: Could not find module index.html to replace root."
           fi
 
       - name: Upload artifact
