@@ -59,12 +59,17 @@ jobs:
           
           echo "Contents of .doccarchive:"
           ls -la "$DOCARCHIVE_PATH"
+          find "$DOCARCHIVE_PATH" -type f | head -10
           
-          echo "Processing archive..."
+          echo "Checking for data.mdb file (contains actual content):"
+          find "$DOCARCHIVE_PATH" -name "data.mdb" -exec ls -la {} \;
+          
+          echo "Processing archive with verbose output..."
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --hosting-base-path HelpingHand \
-            --output-path docs
+            --output-path docs \
+            --verbose || echo "Process archive failed"
           
           echo "Contents of docs directory:"
           find docs -type f -name "*.html" | head -20
