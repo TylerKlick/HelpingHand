@@ -1,9 +1,9 @@
-name: workspace
+name: "[Documentation] DocC Generation"
 
 on:
   push:
     branches:
-      - '**'
+      - 'main'
 
 permissions:
   contents: read
