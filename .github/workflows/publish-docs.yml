@@ -1,8 +1,9 @@
-name: DocC Runner
+name: worksapce
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - '**'
 
 permissions:
   contents: read
@@ -14,15 +15,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build_docC:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-14
 
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -35,13 +39,23 @@ jobs:
       - name: Build DocC
         run: |
           xcodebuild docbuild -scheme "Helping Hand" \
+            -project "Helping Hand.xcodeproj" \
             -derivedDataPath /tmp/docbuild \
             -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
+          
+          DOCARCHIVE_PATH=$(find /tmp/docbuild -type d -name "*.doccarchive" -print -quit)
+          
+          if [ -z "$DOCARCHIVE_PATH" ]; then
+            echo "Error: No .doccarchive found. Exiting."
+            exit 1
+          fi
+          echo "Found .doccarchive at: $DOCARCHIVE_PATH"
+          
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/HelpingHand.doccarchive \
+            transform-for-static-hosting "$DOCARCHIVE_PATH" \
             --hosting-base-path HelpingHand \
             --output-path docs
           echo "<script>window.location.href += \"/documentation/helpinghand\"</script>" > docs/index.html
