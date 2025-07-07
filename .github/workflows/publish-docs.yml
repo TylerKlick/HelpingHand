@@ -18,7 +18,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-14 # Changed from macos-latest for consistency
+    runs-on: macos-14
 
     steps:
       - name: Checkout
@@ -48,15 +48,15 @@ jobs:
             -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO # Added flags to disable code signing
+            CODE_SIGNING_ALLOWED=NO
             
-          DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
+          # More specific path for doccarchive within derived data
+          DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH/Build/Products/" -type d -name "*.doccarchive" -print -quit)
 
           if [ -z "$DOCARCHIVE_PATH" ]; then
-            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH. Exiting."
+            echo "Error: No .doccarchive found in $DERIVED_DATA_PATH/Build/Products/. Exiting."
             exit 1
           fi
-
           echo "Found .doccarchive at: $DOCARCHIVE_PATH"
 
           $(xcrun --find docc) process-archive \
@@ -64,15 +64,20 @@ jobs:
             --output-path "$FINAL_DOCS_DIR" \
             --hosting-base-path "$GITHUB_PAGES_BASE_PATH"
 
+          # Find the main module's index.html and set up redirect
           DOC_MODULE_INDEX_PATH=$(find "$FINAL_DOCS_DIR/documentation" -type f -name index.html | head -n 1)
 
           if [ -f "$DOC_MODULE_INDEX_PATH" ]; then
             MODULE_RELATIVE_PATH="${DOC_MODULE_INDEX_PATH##$FINAL_DOCS_DIR/}"
-            echo "Redirecting root index.html to: $MODULE_RELATIVE_PATH"
+            echo "Detected module index path: $DOC_MODULE_INDEX_PATH"
+            echo "Calculated relative module path for redirect: $MODULE_RELATIVE_PATH"
+            echo "Redirecting root index.html to: ${GITHUB_PAGES_BASE_PATH}/${MODULE_RELATIVE_PATH}"
             echo "<script>window.location.href = window.location.origin + '$GITHUB_PAGES_BASE_PATH/${MODULE_RELATIVE_PATH}';</script>" > "$FINAL_DOCS_DIR/index.html"
           else
-            echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. The root index.html might not redirect automatically."
-            echo "Please ensure your project's DocC documentation generates a main module index.html."
+            echo "Warning: Module index.html not found in $FINAL_DOCS_DIR/documentation. This means the main documentation entry point could not be determined for redirection."
+            echo "Please verify the structure of the generated DocC output in the 'docs' directory."
+            echo "Contents of $FINAL_DOCS_DIR/documentation:"
+            ls -R "$FINAL_DOCS_DIR/documentation" || true
           fi
 
       - name: Upload artifact
