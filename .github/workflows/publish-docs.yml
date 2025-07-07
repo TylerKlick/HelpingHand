@@ -45,7 +45,7 @@ jobs:
             -project "Helping Hand.xcodeproj" \
             -scheme "Helping Hand" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
-            -destination 'generic/platform=iOS'
+            -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates
             
           DOCARCHIVE_PATH=$(find "$DERIVED_DATA_PATH" -type d -name "*.doccarchive" -print -quit)
