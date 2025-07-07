@@ -39,7 +39,7 @@ jobs:
 
           DERIVED_DATA_PATH="/tmp/docbuild"
           FINAL_DOCS_DIR="docs"
-          GITHUB_PAGES_BASE_PATH="/${{ github.event.repository.name }}"
+          GITHUB_PAGES_BASE_PATH=""
           LS_OUTPUT_FILE="docs_structure.txt"
 
           rm -rf "$DERIVED_DATA_PATH" "$FINAL_DOCS_DIR"
