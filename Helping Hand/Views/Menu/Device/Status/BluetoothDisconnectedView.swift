@@ -16,7 +16,7 @@ struct DeviceNotConnectedView: View {
                     .opacity(opacity)
                 
                 // Device icon
-                Image(systemName: "wifi.slash")
+                Image(systemName: "bluetooth.slash")
                     .font(.system(size: 50))
                     .foregroundColor(.red)
             }

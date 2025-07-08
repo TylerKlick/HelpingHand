@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXBuildRule section */
 		FAFE83972E185B43007EF21E /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -37,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +85,7 @@
 			);
 			name = "Helping Hand";
 			packageProductDependencies = (
+				FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */,
 			);
 			productName = "Helping Hand";
 			productReference = FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */;
@@ -112,6 +118,9 @@
 			);
 			mainGroup = FA7AB6132DFB3F9C0097E164;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA7AB61D2DFB3F9C0097E164 /* Products */;
 			projectDirPath = "";
@@ -367,6 +376,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FA7AB6142DFB3F9C0097E164 /* Project object */;
 }
