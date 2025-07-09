@@ -21,38 +21,39 @@ struct ContentView: View {
         )
         .ignoresSafeArea()
         .overlay(
-            
-            CustomTabView {
-                CustomTab(title: "Home", image: "house", accentColor: .blue) {
-                    VStack {
-                        Text("Home View")
-                            .font(.largeTitle)
-                        Spacer()
-                    }
-                }
-                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
-                    VStack {
-                        Text("Settings View")
-                            .font(.largeTitle)
-                        Spacer()
-                    }
-                }
-                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
-                    VStack {
-                        Text("Settings View")
-                            .font(.largeTitle)
-                        Spacer()
-                    }
-                }
-                CustomTab(title: "Settings", image: "gear", accentColor: .orange) {
-                    VStack {
-                        Text("Settings View")
-                            .font(.largeTitle)
-                        Spacer()
-                    }
-                }
-            }
-        )
+            BluetoothView()
+//
+//            CustomTabView {
+//                CustomTab(title: "Home", image: "house", accentColor: .blue) {
+//                    VStack {
+//                        Text("Home View")
+//                            .font(.largeTitle)
+//                        Spacer()
+//                    }
+//                }
+//                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
+//                    VStack {
+//                        Text("Settings View")
+//                            .font(.largeTitle)
+//                        Spacer()
+//                    }
+//                }
+//                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
+//                    VStack {
+//                        Text("Settings View")
+//                            .font(.largeTitle)
+//                        Spacer()
+//                    }
+//                }
+//                CustomTab(title: "Settings", image: "gear", accentColor: .orange) {
+//                    VStack {
+//                        Text("Settings View")
+//                            .font(.largeTitle)
+//                        Spacer()
+//                    }
+//                }
+//            }
+                    )
     }
 }
 
