@@ -1,5 +1,5 @@
-import ConfettiSwiftUI
 import SwiftUI
+internal import ConfettiSwiftUI
 
 struct BluetoothSettingsGuideView: View {
     @State private var currentStep = 0
@@ -21,7 +21,7 @@ struct BluetoothSettingsGuideView: View {
             ZStack {
                 
                 // Step 1: Settings Menu
-                if currentStep >= 0 {
+                if currentStep >= 0 && currentStep < 2 {
                     SettingsMenuView(
                         highlightBluetooth: currentStep >= 1,
                         pulse: pulseAnimation && currentStep == 1

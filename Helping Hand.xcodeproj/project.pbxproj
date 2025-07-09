@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */; };
+		FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = FAFE85192E1DE792007EF21E /* FluidGradient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */,
+				FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +88,7 @@
 			name = "Helping Hand";
 			packageProductDependencies = (
 				FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */,
+				FAFE85192E1DE792007EF21E /* FluidGradient */,
 			);
 			productName = "Helping Hand";
 			productReference = FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */;
@@ -120,6 +123,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				FAFE85182E1DE792007EF21E /* XCRemoteSwiftPackageReference "FluidGradient" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA7AB61D2DFB3F9C0097E164 /* Products */;
@@ -386,6 +390,14 @@
 				minimumVersion = 2.0.3;
 			};
 		};
+		FAFE85182E1DE792007EF21E /* XCRemoteSwiftPackageReference "FluidGradient" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Cindori/FluidGradient.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -393,6 +405,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
+		};
+		FAFE85192E1DE792007EF21E /* FluidGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAFE85182E1DE792007EF21E /* XCRemoteSwiftPackageReference "FluidGradient" */;
+			productName = FluidGradient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

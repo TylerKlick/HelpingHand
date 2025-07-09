@@ -6,26 +6,53 @@
 //
 
 import SwiftUI
+internal import FluidGradient
 
 struct ContentView: View {
     
     var body: some View {
-        CustomTabView {
-            CustomTab(title: "Home", image: "house", accentColor: .blue) {
-                VStack {
-                    Text("Home View")
-                        .font(.largeTitle)
-                    Spacer()
+        
+        
+        FluidGradient(
+            blobs: [.purple, .cyan, .indigo],
+            highlights: [.green.opacity(0.8)],
+            speed: 0.1,
+            blur: 0.75
+        )
+        .ignoresSafeArea()
+        .overlay(
+            
+            CustomTabView {
+                CustomTab(title: "Home", image: "house", accentColor: .blue) {
+                    VStack {
+                        Text("Home View")
+                            .font(.largeTitle)
+                        Spacer()
+                    }
+                }
+                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
+                    VStack {
+                        Text("Settings View")
+                            .font(.largeTitle)
+                        Spacer()
+                    }
+                }
+                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
+                    VStack {
+                        Text("Settings View")
+                            .font(.largeTitle)
+                        Spacer()
+                    }
+                }
+                CustomTab(title: "Settings", image: "gear", accentColor: .orange) {
+                    VStack {
+                        Text("Settings View")
+                            .font(.largeTitle)
+                        Spacer()
+                    }
                 }
             }
-            CustomTab(title: "Settings", image: "gear", accentColor: .green) {
-                VStack {
-                    Text("Settings View")
-                        .font(.largeTitle)
-                    Spacer()
-                }
-            }
-        }
+        )
     }
 }
 
