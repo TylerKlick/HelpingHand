@@ -43,9 +43,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
             if scannedPeripherals[peripheral]?.validationState == .validating {
                 handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
             }
-        } else if peripheral == mainPeripheral {
-            connectionState = .disconnected
-            disconnect()
+            disconnect(peripheral)
         }
     }
 }

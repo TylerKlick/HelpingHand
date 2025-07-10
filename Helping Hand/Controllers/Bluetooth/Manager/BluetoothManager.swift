@@ -83,8 +83,9 @@ class BluetoothManager: NSObject, ObservableObject {
     // MARK: - Private Methods
     
     /// Cleans current connection state, unsubscribing from all characteristics and disconnecting.
-    internal func disconnect() {
-        guard let peripheral = mainPeripheral,
+    internal func disconnect(_ peripheral: CBPeripheral? = nil) {
+        let targetPeripheral = peripheral ?? mainPeripheral
+        guard let peripheral = targetPeripheral,
               case .connected = peripheral.state else {
             connectionState = .disconnected
             return
@@ -152,9 +153,7 @@ class BluetoothManager: NSObject, ObservableObject {
         }
         
         // Disconnect validation connections
-        if !info.isMainConnection && peripheral.state == .connected {
-            disconnect()
-        }
+        disconnect(peripheral)
     }
     
     internal func isValidationConnection(_ peripheral: CBPeripheral) -> Bool {
