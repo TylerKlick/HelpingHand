@@ -30,6 +30,7 @@ struct SettingsMenuView: View {
                     icon: "bluetooth.fill",
                     title: "Bluetooth",
                     color: .blue,
+                    isSystemImage: false,
                     isHighlighted: highlightBluetooth,
                     pulse: pulse
                 )
@@ -105,8 +106,8 @@ struct BluetoothToggleView: View {
                 if isEnabled {
                     VStack(spacing: 8) {
                         HStack {
-                            Image(systemName: "bluetooth.fill")
-                                .foregroundColor(.blue)
+                            Image("bluetooth.fill")
+                                .foregroundColor(.white)
                                 .font(.system(size: 16))
                             Text("Bluetooth is ON")
                                 .font(.subheadline)
@@ -139,6 +140,7 @@ struct SettingsRowView: View {
     let icon: String
     let title: String
     let color: Color
+    var isSystemImage: Bool = true
     var isHighlighted: Bool = false
     var pulse: Bool = false
     
@@ -154,7 +156,7 @@ struct SettingsRowView: View {
                     .frame(width: 26, height: 26)
                     .shadow(color: color.opacity(0.3), radius: 1, x: 0, y: 1)
                 
-                Image(systemName: icon)
+                (isSystemImage ? Image(systemName: icon) : Image(icon))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
             }
