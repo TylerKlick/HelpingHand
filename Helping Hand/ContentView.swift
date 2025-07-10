@@ -22,7 +22,7 @@ struct ContentView: View {
         .ignoresSafeArea()
         .overlay(
             BluetoothView()
-//
+
 //            CustomTabView {
 //                CustomTab(title: "Home", image: "house", accentColor: .blue) {
 //                    VStack {
