@@ -31,9 +31,6 @@ struct BluetoothView: View {
             }
             .padding()
             .navigationTitle("Helping Hand")
-            .onAppear {
-                bluetoothManager.retrieveConnectedPeripherals()
-            }
         }
     }
     
@@ -101,13 +98,13 @@ struct BluetoothView: View {
             Text("Discovered Peripherals")
                 .font(.headline)
             
-            if bluetoothManager.discoveredPeripherals.isEmpty {
+            if bluetoothManager.validatedPeripherals.isEmpty {
                 Text("No peripherals discovered")
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
             } else {
-                ForEach(bluetoothManager.discoveredPeripherals, id: \.identifier) { peripheral in
+                ForEach(bluetoothManager.validatedPeripherals, id: \.identifier) { peripheral in
                     HStack {
                         VStack(alignment: .leading) {
                             Text(peripheral.name ?? "Unknown Device")

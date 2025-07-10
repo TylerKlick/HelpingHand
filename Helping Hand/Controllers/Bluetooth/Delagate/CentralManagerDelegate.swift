@@ -9,7 +9,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        guard peripheralInfo[peripheral] == nil else { return }
+        guard scannedPeripherals[peripheral] == nil else { return }
         
         // Pre-filter: skip devices that don't advertise any services
         guard advertisementData[CBAdvertisementDataServiceUUIDsKey] != nil else { return }
@@ -40,13 +40,12 @@ extension BluetoothManager: CBCentralManagerDelegate {
         
         if isValidationConnection(peripheral) {
             // Validation was interrupted - mark as invalid unless already validated
-            if peripheralInfo[peripheral]?.validationState == .validating {
+            if scannedPeripherals[peripheral]?.validationState == .validating {
                 handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
             }
         } else if peripheral == mainPeripheral {
             connectionState = .disconnected
-            connectedPeripheral = nil
-            cleanup()
+            disconnect()
         }
     }
 }
