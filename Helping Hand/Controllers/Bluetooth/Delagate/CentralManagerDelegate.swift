@@ -25,14 +25,20 @@ extension BluetoothManager: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("Connected to peripheral: %@", peripheral)
         
+        // Check if this is the main connection (user-initiated)
         if peripheral == mainPeripheral {
             connectionState = .connected
             connectedPeripheral = peripheral
             stopScanning()
+            
+            // Set up the peripheral delegate and discover services
+            peripheral.delegate = self
+            peripheral.discoverServices(CBUUIDs.serviceUUIDs)
+        } else {
+            // This is a validation connection
+            peripheral.delegate = self
+            peripheral.discoverServices(CBUUIDs.serviceUUIDs)
         }
-        
-        peripheral.delegate = self
-        peripheral.discoverServices(CBUUIDs.serviceUUIDs)
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -43,7 +49,15 @@ extension BluetoothManager: CBCentralManagerDelegate {
             if scannedPeripherals[peripheral]?.validationState == .validating {
                 handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
             }
-            disconnect(peripheral)
         }
+        
+        // Handle main peripheral disconnect
+        if peripheral == mainPeripheral {
+            connectedPeripheral = nil
+            connectionState = .disconnected
+            mainPeripheral = nil
+        }
+        
+        disconnect(peripheral)
     }
 }

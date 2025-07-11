@@ -50,6 +50,9 @@ class BluetoothManager: NSObject, ObservableObject {
     internal var scannedPeripherals: [CBPeripheral: PeripheralInfo] = [:]
     internal var mainPeripheral: CBPeripheral?
     
+    // NEW: Keep track of previously validated device identifiers
+    private var validatedDeviceIdentifiers: Set<UUID> = []
+    
     override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
@@ -59,7 +62,7 @@ class BluetoothManager: NSObject, ObservableObject {
     func startScanning() {
         guard bluetoothState == .poweredOn else { return }
     
-        clearPeripheralInfo(true)
+        clearPeripheralInfo()  // Don't clear validated peripherals list
         isScanning = true
         centralManager.scanForPeripherals(withServices: CBUUIDs.serviceUUIDs)
         os_log("Started scanning for peripherals")
@@ -109,13 +112,37 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     internal func clearPeripheralInfo(_ clearAll: Bool = false) {
-        if clearAll { validatedPeripherals.removeAll() }
+        if clearAll {
+            validatedPeripherals.removeAll()
+            validatedDeviceIdentifiers.removeAll()  // Clear the persistent tracking too
+        }
         scannedPeripherals.values.forEach { $0.validationTimer?.invalidate() }
         scannedPeripherals.removeAll()
     }
     
     internal func startValidation(for peripheral: CBPeripheral) {
         guard scannedPeripherals[peripheral] == nil else { return }
+        
+        // NEW: Check if this device was previously validated
+        if validatedDeviceIdentifiers.contains(peripheral.identifier) {
+            os_log("Device %@ was previously validated - skipping validation", peripheral)
+            
+            // Mark as validated in scanned peripherals but DON'T connect
+            scannedPeripherals[peripheral] = PeripheralInfo(
+                peripheral: peripheral,
+                validationState: .valid,
+                validationTimer: nil
+            )
+            
+            // Add directly to validated peripherals without connecting
+            DispatchQueue.main.async {
+                if !self.validatedPeripherals.contains(peripheral) {
+                    self.validatedPeripherals.append(peripheral)
+                }
+            }
+            
+            return
+        }
         
         os_log("Starting validation for peripheral: %@", peripheral)
         
@@ -145,6 +172,9 @@ class BluetoothManager: NSObject, ObservableObject {
         os_log("Peripheral validation %@: %@ %@", resultText, peripheral, reason)
         
         if isValid {
+            // NEW: Remember this device for future sessions
+            validatedDeviceIdentifiers.insert(peripheral.identifier)
+            
             DispatchQueue.main.async {
                 if !self.validatedPeripherals.contains(peripheral) {
                     self.validatedPeripherals.append(peripheral)
