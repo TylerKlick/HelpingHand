@@ -6,6 +6,26 @@ import CoreBluetooth
 
 struct CBUUIDs {
     
+    // MARK: - CCBUID Internal Structure
+    enum CharacteristicProperty {
+        case notify
+        case write
+        case read
+    }
+
+    struct BLECharacteristicSpec {
+        let uuid: CBUUID
+        let name: String
+        let properties: [CharacteristicProperty]
+    }
+
+    struct BLEServiceSpec {
+        let uuid: CBUUID
+        let name: String
+        let characteristics: [BLECharacteristicSpec]
+    }
+
+    
     // MARK: - Add Services and Characteristics HERE
     
     static let healthService = BLEServiceSpec(
@@ -66,25 +86,6 @@ struct CBUUIDs {
         }
         return nil
     }
-}
-
-// MARK: - CCBUID Internal Structure
-enum CharacteristicProperty {
-    case notify
-    case write
-    case read
-}
-
-struct BLECharacteristicSpec {
-    let uuid: CBUUID
-    let name: String
-    let properties: [CharacteristicProperty]
-}
-
-struct BLEServiceSpec {
-    let uuid: CBUUID
-    let name: String
-    let characteristics: [BLECharacteristicSpec]
 }
 
 
