@@ -5,12 +5,15 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
-import SwiftUI
 import CoreBluetooth
 import os
 
+class BluetoothManagerSingleton {
+    static let shared = BluetoothManager()
+}
+
 // MARK: - Bluetooth Manager
-class BluetoothManager: NSObject, ObservableObject {
+internal class BluetoothManager: NSObject, ObservableObject {
     
     // MARK: - States
     enum ConnectionState {
@@ -147,8 +150,6 @@ class BluetoothManager: NSObject, ObservableObject {
         }
     }
     
-    // Add this method to your BluetoothManager class
-
     func getPairedDeviceIdentifiers() -> Set<UUID> {
         let pairedDevices = pairingManager.getPairedDevicesList()
         return Set(pairedDevices.map { $0.identifier })

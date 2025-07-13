@@ -90,8 +90,8 @@ struct DeviceConnectedView: View {
     Group {
 
         DeviceConnectedView(
-            deviceName: "Apple Watch Series 9",
-            deviceType: "Smart Watch"
+            deviceName: "sEMG Device",
+            deviceType: "Gesture Sensing and Inferencing"
         )
     }
 }
