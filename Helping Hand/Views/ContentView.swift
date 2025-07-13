@@ -17,29 +17,20 @@ struct ContentView: View {
             blobs: [.purple, .cyan, .indigo],
             highlights: [.green.opacity(0.8)],
             speed: 0.1,
-            blur: 0.75
+            blur: 0.9
         )
         .ignoresSafeArea()
         .overlay(
-            BluetoothView()
-//            CustomTabView {
-//                CustomTab(title: "Home", image: "house", accentColor: .blue) {
-//                    VStack {
-//                        Text("Home View")
-//                            .font(.largeTitle)
-//                        Spacer()
-//                    }
-//                }
-//                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
-//                    BluetoothView()
-//                }
-//                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
-//                    VStack {
-//                        Text("Settings View")
-//                            .font(.largeTitle)
-//                        Spacer()
-//                    }
-//                }
+            CustomTabView {
+                CustomTab(title: "Home", image: "house", accentColor: .blue) {
+                    BluetoothView()
+                }
+                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
+                    BluetoothView()
+                }
+                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
+                    BluetoothView()
+                }
 //                CustomTab(title: "Settings", image: "gear", accentColor: .orange) {
 //                    VStack {
 //                        Text("Settings View")
@@ -47,7 +38,7 @@ struct ContentView: View {
 //                        Spacer()
 //                    }
 //                }
-//            }
+            }
                     )
     }
 }
