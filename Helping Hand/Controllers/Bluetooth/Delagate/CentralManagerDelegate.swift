@@ -9,13 +9,11 @@ extension BluetoothManager: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        guard scannedPeripherals[peripheral] == nil else { return }
-        
         // Pre-filter: skip devices that don't advertise any services
         guard advertisementData[CBAdvertisementDataServiceUUIDsKey] != nil else { return }
         
-        os_log("Discovered peripheral: %@ - starting validation", peripheral)
-        startValidation(for: peripheral)
+        os_log("Discovered peripheral: %@", peripheral)
+        addDiscoveredPeripheral(peripheral)
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -25,39 +23,40 @@ extension BluetoothManager: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("Connected to peripheral: %@", peripheral)
         
-        // Check if this is the main connection (user-initiated)
-        if peripheral == mainPeripheral {
-            connectionState = .connected
-            connectedPeripheral = peripheral
-            stopScanning()
-            
-            // Set up the peripheral delegate and discover services
-            peripheral.delegate = self
-            peripheral.discoverServices(CBUUIDs.serviceUUIDs)
-        } else {
-            // This is a validation connection
-            peripheral.delegate = self
-            peripheral.discoverServices(CBUUIDs.serviceUUIDs)
-        }
+        updateConnectionState(for: peripheral, state: .validating)
+        
+        peripheral.delegate = self
+        peripheral.discoverServices(CBUUIDs.serviceUUIDs)
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         os_log("Disconnected from peripheral: %@", peripheral)
         
-        if isValidationConnection(peripheral) {
-            // Validation was interrupted - mark as invalid unless already validated
-            if scannedPeripherals[peripheral]?.validationState == .validating {
-                handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
-            }
+        handleDisconnection(for: peripheral, error: error)
+    }
+    
+    // MARK: - Helper Methods
+    private func handleConnectionError(for peripheral: CBPeripheral, error: Error?) {
+        if let error = error {
+            os_log("Connection error for %@: %@", peripheral, error.localizedDescription)
         }
         
-        // Handle main peripheral disconnect
-        if peripheral == mainPeripheral {
-            connectedPeripheral = nil
-            connectionState = .disconnected
-            mainPeripheral = nil
+        updateConnectionState(for: peripheral, state: .disconnected)
+        handleValidationResult(for: peripheral, isValid: false, reason: "connection failed")
+    }
+    
+    private func handleDisconnection(for peripheral: CBPeripheral, error: Error?) {
+        peripheralInfo[peripheral]?.validationTimer?.invalidate()
+        updateConnectionState(for: peripheral, state: .disconnected)
+        
+        if let error = error {
+            os_log("Disconnection error for %@: %@", peripheral, error.localizedDescription)
         }
         
-        disconnect(peripheral)
+        // If peripheral was validating and disconnected unexpectedly, mark as invalid
+        if let info = peripheralInfo[peripheral],
+           info.validationState == .validating {
+            handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
+        }
     }
 }

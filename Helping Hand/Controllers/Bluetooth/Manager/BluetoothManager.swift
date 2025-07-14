@@ -5,12 +5,15 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
-import SwiftUI
 import CoreBluetooth
 import os
 
+class BluetoothManagerSingleton {
+    static let shared = BluetoothManager()
+}
+
 // MARK: - Bluetooth Manager
-class BluetoothManager: NSObject, ObservableObject {
+internal class BluetoothManager: NSObject, ObservableObject {
     
     // MARK: - States
     enum ConnectionState {
@@ -18,37 +21,35 @@ class BluetoothManager: NSObject, ObservableObject {
         case connecting
         case connected
         case disconnecting
+        case validating
+        case validationFailed
     }
     
     // MARK: - Peripheral Info
     struct PeripheralInfo {
         let peripheral: CBPeripheral
-        var validationState: ValidationState = .validating
+        var connectionState: ConnectionState = .disconnected
+        var isValidated: Bool = false
         var validationTimer: Timer?
-        var isMainConnection: Bool = false
         
-        var isValidated: Bool {
-            return validationState == .valid
-        }
-        
-        /// Current phase of asynchronous validation
         enum ValidationState {
+            case pending
             case validating
             case valid
             case invalid
         }
+        var validationState: ValidationState = .pending
     }
     
     @Published var bluetoothState: CBManagerState = .unknown
-    @Published var connectionState: ConnectionState = .disconnected
-    @Published var validatedPeripherals: [CBPeripheral] = []
-    @Published var connectedPeripheral: CBPeripheral?
+    @Published var discoveredPeripherals: [CBPeripheral] = []
+    @Published var peripheralConnectionStates: [CBPeripheral: ConnectionState] = [:]
     @Published var receivedData: [String] = []
     @Published var isScanning = false
     
+    private var pairingManager = DevicePairingManager()
     private var centralManager: CBCentralManager!
-    internal var scannedPeripherals: [CBPeripheral: PeripheralInfo] = [:]
-    internal var mainPeripheral: CBPeripheral?
+    internal var peripheralInfo: [CBPeripheral: PeripheralInfo] = [:]
     
     // NEW: Keep track of previously validated device identifiers
     private var validatedDeviceIdentifiers: Set<UUID> = []
@@ -56,13 +57,46 @@ class BluetoothManager: NSObject, ObservableObject {
     override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
+        loadPairedDevices()
+    }
+    
+    func loadPairedDevices() {
+        guard bluetoothState == .poweredOn else { return }
+        
+        let pairedDevices = pairingManager.getPairedDevicesList()
+        
+        // Retrieve peripherals using their identifiers
+        let identifiers = pairedDevices.map { $0.identifier }
+        let peripherals = centralManager.retrievePeripherals(withIdentifiers: identifiers)
+        
+        for peripheral in peripherals {
+            // Set up peripheral info
+            if peripheralInfo[peripheral] == nil {
+                peripheralInfo[peripheral] = PeripheralInfo(peripheral: peripheral)
+                updateConnectionState(for: peripheral, state: .disconnected)
+            }
+            
+            // Update last seen for paired device
+            pairingManager.updateLastSeen(peripheral)
+            
+            // Add to discovered peripherals if not already there
+            DispatchQueue.main.async {
+                if !self.discoveredPeripherals.contains(peripheral) {
+                    self.discoveredPeripherals.append(peripheral)
+                }
+            }
+        }
+        
+        os_log("Loaded %d paired devices", peripherals.count)
     }
     
     // MARK: - Public Methods
     func startScanning() {
         guard bluetoothState == .poweredOn else { return }
-    
-        clearPeripheralInfo()  // Don't clear validated peripherals list
+        
+        discoveredPeripherals.removeAll()
+        peripheralInfo.removeAll()
+        peripheralConnectionStates.removeAll()
         isScanning = true
         centralManager.scanForPeripherals(withServices: CBUUIDs.serviceUUIDs)
         os_log("Started scanning for peripherals")
@@ -71,30 +105,32 @@ class BluetoothManager: NSObject, ObservableObject {
     func stopScanning() {
         centralManager.stopScan()
         isScanning = false
-        clearPeripheralInfo()
         os_log("Stopped scanning")
     }
     
     func connect(to peripheral: CBPeripheral) {
-        connectionState = .connecting
+        guard peripheralInfo[peripheral] != nil else { return }
+        
+        updateConnectionState(for: peripheral, state: .connecting)
+        peripheralInfo[peripheral]?.validationState = .validating
+        
+        // Start validation timer
+        let timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
+            self?.handleValidationTimeout(for: peripheral)
+        }
+        peripheralInfo[peripheral]?.validationTimer = timer
+        
         centralManager.connect(peripheral, options: nil)
-        mainPeripheral = peripheral
-        scannedPeripherals[peripheral]?.isMainConnection = true
         os_log("Attempting to connect to %@", peripheral)
+        
+        pairingManager.pairDevice(peripheral)
     }
     
-    // MARK: - Private Methods
-    
-    /// Cleans current connection state, unsubscribing from all characteristics and disconnecting.
-    internal func disconnect(_ peripheral: CBPeripheral? = nil) {
-        let targetPeripheral = peripheral ?? mainPeripheral
-        guard let peripheral = targetPeripheral,
-              case .connected = peripheral.state else {
-            connectionState = .disconnected
-            return
-        }
+    func disconnect(_ peripheral: CBPeripheral) {
+        guard let info = peripheralInfo[peripheral],
+              info.connectionState == .connected || info.connectionState == .validating else { return }
         
-        connectionState = .disconnecting
+        updateConnectionState(for: peripheral, state: .disconnecting)
         
         // Unsubscribe from notifications
         for service in (peripheral.services ?? []) {
@@ -105,140 +141,82 @@ class BluetoothManager: NSObject, ObservableObject {
             }
         }
         
+        os_log("Disconnecting from %@", peripheral)
         centralManager.cancelPeripheralConnection(peripheral)
-        mainPeripheral = nil
-        connectedPeripheral = nil
-        connectionState = .disconnected
     }
     
-    internal func clearPeripheralInfo(_ clearAll: Bool = false) {
-        if clearAll {
-            validatedPeripherals.removeAll()
-            validatedDeviceIdentifiers.removeAll()  // Clear the persistent tracking too
-        }
-        scannedPeripherals.values.forEach { $0.validationTimer?.invalidate() }
-        scannedPeripherals.removeAll()
-    }
-    
-    internal func startValidation(for peripheral: CBPeripheral) {
-        guard scannedPeripherals[peripheral] == nil else { return }
-        
-        // NEW: Check if this device was previously validated
-        if validatedDeviceIdentifiers.contains(peripheral.identifier) {
-            os_log("Device %@ was previously validated - skipping validation", peripheral)
-            
-            // Mark as validated in scanned peripherals but DON'T connect
-            scannedPeripherals[peripheral] = PeripheralInfo(
-                peripheral: peripheral,
-                validationState: .valid,
-                validationTimer: nil
-            )
-            
-            // Add directly to validated peripherals without connecting
-            DispatchQueue.main.async {
-                if !self.validatedPeripherals.contains(peripheral) {
-                    self.validatedPeripherals.append(peripheral)
-                }
+    func disconnectAll() {
+        for (peripheral, state) in peripheralConnectionStates {
+            if state == .connected || state == .validating {
+                disconnect(peripheral)
             }
-            
-            return
         }
+    }
+    
+    func getPairedDeviceIdentifiers() -> Set<UUID> {
+        let pairedDevices = pairingManager.getPairedDevicesList()
+        return Set(pairedDevices.map { $0.identifier })
+    }
+    
+    // MARK: - Connection State Management
+    func getConnectionState(for peripheral: CBPeripheral) -> ConnectionState {
+        return peripheralConnectionStates[peripheral] ?? .disconnected
+    }
+    
+    func isConnected(_ peripheral: CBPeripheral) -> Bool {
+        return getConnectionState(for: peripheral) == .connected
+    }
+    
+    func isConnecting(_ peripheral: CBPeripheral) -> Bool {
+        let state = getConnectionState(for: peripheral)
+        return state == .connecting || state == .validating
+    }
+    
+    // MARK: - Internal Helper Methods
+    internal func addDiscoveredPeripheral(_ peripheral: CBPeripheral) {
+        guard peripheralInfo[peripheral] == nil else { return }
         
-        os_log("Starting validation for peripheral: %@", peripheral)
+        peripheralInfo[peripheral] = PeripheralInfo(peripheral: peripheral)
+        updateConnectionState(for: peripheral, state: .disconnected)
         
-        let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
-            self?.handleValidationResult(for: peripheral, isValid: false, reason: "timeout")
+        DispatchQueue.main.async {
+            if !self.discoveredPeripherals.contains(peripheral) {
+                self.discoveredPeripherals.append(peripheral)
+            }
         }
+    }
+    
+    internal func updateConnectionState(for peripheral: CBPeripheral, state: ConnectionState) {
+        peripheralInfo[peripheral]?.connectionState = state
         
-        scannedPeripherals[peripheral] = PeripheralInfo(
-            peripheral: peripheral,
-            validationState: .validating,
-            validationTimer: timer
-        )
-        
-        // Start looking at characteristics by initiating connection
-        peripheral.delegate = self
-        centralManager.connect(peripheral, options: nil)
+        DispatchQueue.main.async {
+            self.peripheralConnectionStates[peripheral] = state
+        }
+    }
+    
+    internal func handleValidationTimeout(for peripheral: CBPeripheral) {
+        os_log("Validation timeout for peripheral: %@", peripheral)
+        handleValidationResult(for: peripheral, isValid: false, reason: "timeout")
     }
     
     internal func handleValidationResult(for peripheral: CBPeripheral, isValid: Bool, reason: String = "") {
-        guard var info = scannedPeripherals[peripheral] else { return }
+        guard var info = peripheralInfo[peripheral] else { return }
         
         info.validationTimer?.invalidate()
         info.validationState = isValid ? .valid : .invalid
-        scannedPeripherals[peripheral] = info
+        info.isValidated = isValid
+        peripheralInfo[peripheral] = info
         
         let resultText = isValid ? "successful" : "failed"
         os_log("Peripheral validation %@: %@ %@", resultText, peripheral, reason)
         
         if isValid {
-            // NEW: Remember this device for future sessions
-            validatedDeviceIdentifiers.insert(peripheral.identifier)
-            
-            DispatchQueue.main.async {
-                if !self.validatedPeripherals.contains(peripheral) {
-                    self.validatedPeripherals.append(peripheral)
-                }
-            }
+            updateConnectionState(for: peripheral, state: .connected)
+        } else {
+            updateConnectionState(for: peripheral, state: .validationFailed)
+            // Disconnect invalid peripheral
+            centralManager.cancelPeripheralConnection(peripheral)
         }
-        
-        // Disconnect validation connections
-        disconnect(peripheral)
-    }
-    
-    internal func isValidationConnection(_ peripheral: CBPeripheral) -> Bool {
-        return scannedPeripherals[peripheral]?.isMainConnection == false
-    }
-    
-    internal func handleConnectionError(for peripheral: CBPeripheral, error: Error? = nil) {
-        if let error = error {
-            os_log("Connection error for %@: %@", peripheral, error.localizedDescription)
-        }
-        
-        if isValidationConnection(peripheral) {
-            handleValidationResult(for: peripheral, isValid: false, reason: "connection failed")
-        } else if peripheral == mainPeripheral {
-            disconnect()
-            connectionState = .disconnected
-        }
-    }
-    
-    internal func handleServiceDiscoveryError(for peripheral: CBPeripheral, error: Error? = nil) {
-        if let error = error {
-            os_log("Service discovery error: %@", error.localizedDescription)
-        }
-        
-        if isValidationConnection(peripheral) {
-            handleValidationResult(for: peripheral, isValid: false, reason: "service discovery failed")
-        } else if peripheral == mainPeripheral {
-            disconnect()
-        }
-    }
-    
-    internal func validateServicesAndCharacteristics(for peripheral: CBPeripheral) -> Bool {
-        guard let services = peripheral.services else { return false }
-        
-        let expectedServices = CBUUIDs.serviceUUIDs
-        let foundServices = services.map { $0.uuid }
-        
-        // Check all required services are present
-        guard expectedServices.allSatisfy({ foundServices.contains($0) }) else {
-            return false
-        }
-        
-        // Check all required characteristics are present
-        for service in services {
-            guard let characteristics = service.characteristics else { return false }
-            
-            let expectedCharacteristics = CBUUIDs.characteristicUUIDs(for: service.uuid)
-            let foundCharacteristics = characteristics.map { $0.uuid }
-            
-            guard expectedCharacteristics.allSatisfy({ foundCharacteristics.contains($0) }) else {
-                return false
-            }
-        }
-        
-        return true
     }
     
     internal func processReceivedData(_ data: Data, from characteristic: CBCharacteristic) {
@@ -260,31 +238,6 @@ class BluetoothManager: NSObject, ObservableObject {
             // Keep only last 50 entries
             if self.receivedData.count > 50 {
                 self.receivedData.removeFirst()
-            }
-        }
-    }
-    
-    internal func setupCharacteristics(for peripheral: CBPeripheral) {
-        guard let services = peripheral.services else { return }
-        
-        for service in services {
-            guard let characteristics = service.characteristics else { continue }
-            
-            for characteristic in characteristics {
-                guard let spec = CBUUIDs.characteristicSpec(for: characteristic.uuid) else { continue }
-                
-                for property in spec.properties {
-                    switch property {
-                    case .notify:
-                        peripheral.setNotifyValue(true, for: characteristic)
-                        os_log("Subscribed to notifications for %@", characteristic.uuid.uuidString)
-                    case .read:
-                        peripheral.readValue(for: characteristic)
-                        os_log("Reading value for %@", characteristic.uuid.uuidString)
-                    case .write:
-                        os_log("Found writable characteristic %@", characteristic.uuid.uuidString)
-                    }
-                }
             }
         }
     }
