@@ -41,10 +41,3 @@ struct RowView: View, Identifiable {
         )
     }
 }
-
-#Preview {
-    Group { 
-        RowView(systemImageName: "gear", title: "General", backgroundColor: .gray, fillWidth: true)
-        RowView(systemImageName: "person.crop.circle.fill", title: "Profile", backgroundColor: .blue, fillWidth: false)
-    }
-}

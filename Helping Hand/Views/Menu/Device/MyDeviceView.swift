@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreBluetooth
+internal import SwiftUIVisualEffects
 
 // MARK: - Main Bluetooth View
 struct BluetoothView: View {
@@ -31,6 +32,7 @@ struct BluetoothView: View {
                             bluetoothState: bluetoothManager.bluetoothState,
                             connectedCount: connectedDevicesCount
                         )
+
                         
                         QuickActionsCard(
                             isScanning: bluetoothManager.isScanning,

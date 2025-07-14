@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreBluetooth
+internal import SwiftUIVisualEffects
 
 // MARK: - Device List Card
 struct DeviceListCard: View {
@@ -93,6 +94,7 @@ struct DeviceListHeader: View {
             Text(title)
                 .font(.subheadline)
                 .fontWeight(.medium)
+                .opacity(0.95)
             
             Spacer()
             
@@ -128,37 +130,40 @@ struct DeviceList: View {
     }
 }
 
-// MARK: - Device Card
 struct DeviceCard: View {
     let device: CBPeripheral
     let connectionState: ConnectionState
     let isPaired: Bool
     let onTap: (() -> Void)?
     let onConnectionAction: () -> Void
-    
+
     var body: some View {
         let content = HStack(spacing: 16) {
             DeviceIcon(
                 connectionState: connectionState,
                 isPaired: isPaired
             )
-            
+
             DeviceInfo(
                 device: device,
                 isPaired: isPaired
             )
-            
+
             Spacer()
-            
+
             DeviceActions(
                 connectionState: connectionState,
                 onConnectionAction: onConnectionAction
             )
         }
         .padding(16)
-        .background(deviceCardBackground)
-        .overlay(deviceCardBorder)
-        
+//        .vibrancyEffect()
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(borderColor, lineWidth: 1)
+        )
+
         if let onTap = onTap {
             Button(action: onTap) {
                 content
@@ -168,17 +173,7 @@ struct DeviceCard: View {
             content
         }
     }
-    
-    private var deviceCardBackground: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color(.systemGray6))
-    }
-    
-    private var deviceCardBorder: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .stroke(borderColor, lineWidth: 1)
-    }
-    
+
     private var borderColor: Color {
         switch connectionState {
         case .connected: return .green.opacity(0.3)
@@ -200,8 +195,9 @@ struct DeviceIcon: View {
             .foregroundColor(iconColor)
             .frame(width: 32, height: 32)
             .background(
-                Circle()
-                    .fill(iconColor.opacity(0.1))
+                BlurEffect()
+                    .blurEffectStyle(.systemUltraThinMaterial)
+                    .clipShape(Circle())
             )
     }
     

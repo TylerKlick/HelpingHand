@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FAA7CE322E2541EA005316CD /* SwiftUIVisualEffects in Frameworks */ = {isa = PBXBuildFile; productRef = FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */; };
 		FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */; };
 		FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = FAFE85192E1DE792007EF21E /* FluidGradient */; };
 /* End PBXBuildFile section */
@@ -44,6 +45,7 @@
 			files = (
 				FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */,
 				FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */,
+				FAA7CE322E2541EA005316CD /* SwiftUIVisualEffects in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +91,7 @@
 			packageProductDependencies = (
 				FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */,
 				FAFE85192E1DE792007EF21E /* FluidGradient */,
+				FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */,
 			);
 			productName = "Helping Hand";
 			productReference = FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */;
@@ -124,6 +127,7 @@
 			packageReferences = (
 				FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				FAFE85182E1DE792007EF21E /* XCRemoteSwiftPackageReference "FluidGradient" */,
+				FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA7AB61D2DFB3F9C0097E164 /* Products */;
@@ -386,6 +390,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lucasbrown/swiftui-visual-effects.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
@@ -405,6 +417,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */;
+			productName = SwiftUIVisualEffects;
+		};
 		FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreBluetooth
+internal import SwiftUIVisualEffects
 
 // MARK: - Hero Status Card
 struct HeroStatusCard: View {
@@ -21,6 +22,8 @@ struct HeroStatusCard: View {
                 ConnectedDevicesBadge(count: connectedCount)
             }
         }
+        .blurEffectStyle(.systemChromeMaterialLight)
+        .vibrancyEffectStyle(.fill)
     }
 }
 
@@ -78,7 +81,9 @@ struct ConnectedDevicesBadge: View {
             Text("\(count)")
                 .font(.headline)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .vibrancyEffect()
+                .vibrancyEffectStyle(.label
+                )
             
             Text("Connected")
                 .font(.caption2)
@@ -87,8 +92,9 @@ struct ConnectedDevicesBadge: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(count > 0 ? Color.green : Color.gray)
+            BlurEffect()
+                .blurEffectStyle(count > 0 ? .systemMaterialLight : .systemMaterialDark)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
         )
     }
 }
@@ -103,7 +109,10 @@ struct DeviceCountBadge: View {
             .foregroundColor(.green)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(Color.green.opacity(0.1))
+            .background(
+                BlurEffect()
+                    .blurEffectStyle(.systemUltraThinMaterial)
+            )
             .cornerRadius(4)
     }
 }
@@ -121,7 +130,10 @@ struct ScanningIndicator: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
-        .background(Color.orange.opacity(0.1))
+        .background(
+            BlurEffect()
+                .blurEffectStyle(.systemUltraThinMaterial)
+        )
         .cornerRadius(4)
     }
 }

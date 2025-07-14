@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreBluetooth
+internal import SwiftUIVisualEffects
 
 // MARK: - Device Detail View
 struct DeviceDetailView: View {
@@ -36,6 +37,7 @@ struct DeviceDetailView: View {
                 Spacer()
             }
             .padding()
+            .background(AppStyle.backgroundGradient)
             .navigationTitle("Device Info")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
@@ -48,17 +50,21 @@ struct DeviceDetailView: View {
 // MARK: - App Style
 struct AppStyle {
     static var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color(.systemBackground))
+        BlurEffect()
+            .blurEffectStyle(.systemThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
     
     static var backgroundGradient: some View {
         LinearGradient(
-            gradient: Gradient(colors: [Color(.systemBackground), Color(.systemGray6)]),
+            gradient: Gradient(colors: [
+                Color(.systemGray6),
+                Color(.systemBackground)
+            ]),
             startPoint: .top,
             endPoint: .bottom
         )
+        .edgesIgnoringSafeArea(.all)
     }
 }
-

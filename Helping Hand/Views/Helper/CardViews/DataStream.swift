@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+internal import SwiftUIVisualEffects
 
 // MARK: - Data Stream Card
 struct DataStreamCard: View {
@@ -53,7 +54,10 @@ struct DataStreamHeader: View {
                     .foregroundColor(.red)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.red.opacity(0.1))
+                    .background(
+                        BlurEffect()
+                            .blurEffectStyle(.systemUltraThinMaterial)
+                    )
                     .cornerRadius(4)
                     .buttonStyle(PlainButtonStyle())
             }
@@ -96,8 +100,9 @@ struct DataStreamItem: View {
         }
         .padding(8)
         .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color(.systemGray6))
+            BlurEffect()
+                .blurEffectStyle(.systemUltraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
         )
     }
 }

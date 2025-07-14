@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+internal import SwiftUIVisualEffects
 
 // MARK: - Connection State Typealias
 typealias ConnectionState = BluetoothManager.ConnectionState
@@ -48,7 +49,10 @@ struct ValidationFailedIndicator: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(Color.red.opacity(0.1))
+        .background(
+            BlurEffect()
+                .blurEffectStyle(.systemUltraThinMaterial)
+        )
         .cornerRadius(12)
     }
 }
@@ -78,7 +82,10 @@ struct StatusIndicator: View {
         }
         .padding(.horizontal, showSpinner ? 6 : 8)
         .padding(.vertical, showSpinner ? 2 : 4)
-        .background(color.opacity(0.1))
+        .background(
+            BlurEffect()
+                .blurEffectStyle(.systemUltraThinMaterial)
+        )
         .cornerRadius(showSpinner ? 8 : 12)
     }
 }
@@ -95,8 +102,11 @@ struct ConnectionButton: View {
             .foregroundColor(buttonTextColor)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(buttonBackgroundColor)
-            .cornerRadius(8)
+            .background(
+                BlurEffect()
+                    .blurEffectStyle(blurEffectStyle)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            )
             .buttonStyle(PlainButtonStyle())
     }
     
@@ -117,11 +127,11 @@ struct ConnectionButton: View {
         }
     }
     
-    private var buttonBackgroundColor: Color {
+    private var blurEffectStyle: UIBlurEffect.Style {
         switch state {
-        case .disconnected, .validationFailed: return .blue
-        case .connecting, .validating, .disconnecting: return .orange.opacity(0.1)
-        case .connected: return .red
+        case .disconnected, .validationFailed: return .systemMaterialDark
+        case .connecting, .validating, .disconnecting: return .systemUltraThinMaterial
+        case .connected: return .systemMaterialDark
         }
     }
 }

@@ -7,39 +7,90 @@
 
 import SwiftUI
 internal import FluidGradient
+internal import SwiftUIVisualEffects
 
 struct ContentView: View {
     
     var body: some View {
         
         
-        FluidGradient(
-            blobs: [.purple, .cyan, .indigo],
-            highlights: [.green.opacity(0.8)],
-            speed: 0.1,
-            blur: 0.9
-        )
-        .ignoresSafeArea()
-        .overlay(
-            CustomTabView {
-                CustomTab(title: "Home", image: "house", accentColor: .blue) {
+//        FluidGradient(
+//            blobs: [.purple, .cyan, .indigo],
+//            highlights: [.green.opacity(0.8)],
+//            speed: 0.1,
+//            blur: 0.9
+//        )
+//        .ignoresSafeArea()
+//        .overlay(
+//         )
+        
+        let tabItems = [
+            CustomTabItem(
+                systemImageName: "house",
+                title: "Home",
+                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+            ) {
+                
+                MeshGradientBackground()
+                .ignoresSafeArea()
+                .overlay(
                     BluetoothView()
-                }
-                CustomTab(title: "Settings", image: "gear", accentColor: .purple) {
+                ) 
+            }, CustomTabItem(
+                systemImageName: "house",
+                title: "Home",
+                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+            ) {
+                
+                FluidGradient(
+                    blobs: [.purple, .cyan, .indigo],
+                    highlights: [.green.opacity(0.8)],
+                    speed: 0.1,
+                    blur: 0.9
+                )
+                .ignoresSafeArea()
+                .overlay(
                     BluetoothView()
-                }
-                CustomTab(title: "Settings", image: "gear", accentColor: .indigo) {
+                )
+            },
+            CustomTabItem(
+                systemImageName: "house",
+                title: "Home",
+                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+            ) {
+                
+                FluidGradient(
+                    blobs: [.purple, .cyan, .indigo],
+                    highlights: [.green.opacity(0.8)],
+                    speed: 0.1,
+                    blur: 0.9
+                )
+                .ignoresSafeArea()
+                .overlay(
                     BluetoothView()
-                }
-//                CustomTab(title: "Settings", image: "gear", accentColor: .orange) {
-//                    VStack {
-//                        Text("Settings View")
-//                            .font(.largeTitle)
-//                        Spacer()
-//                    }
-//                }
+                )
+            },
+            CustomTabItem(
+                systemImageName: "house",
+                title: "Home",
+                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+            ) {
+                
+                FluidGradient(
+                    blobs: [.purple, .cyan, .indigo],
+                    highlights: [.green.opacity(0.8)],
+                    speed: 0.1,
+                    blur: 0.9
+                )
+                .ignoresSafeArea()
+                .overlay(
+                    BluetoothView()
+                )
             }
-                    )
+        ]
+        
+        CustomTabView(items: tabItems)
+            
     }
 }
 

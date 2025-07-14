@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreBluetooth
+internal import SwiftUIVisualEffects
 
 // MARK: - Quick Actions Card
 struct QuickActionsCard: View {
@@ -51,19 +52,17 @@ struct ScanButton: View {
                 Spacer()
             }
             .padding(12)
-            .background(scanButtonBackground)
+            .background(
+                BlurEffect()
+                    .blurEffectStyle(isScanning ? .systemUltraThinMaterialLight : .systemUltraThinMaterialDark)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(isScanning ? Color.orange : Color.blue, lineWidth: 1)
+                    )
+            )
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(bluetoothState != .poweredOn)
-    }
-    
-    private var scanButtonBackground: some View {
-        RoundedRectangle(cornerRadius: 8)
-            .fill(isScanning ? Color.orange.opacity(0.1) : Color.blue.opacity(0.1))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isScanning ? Color.orange : Color.blue, lineWidth: 1)
-            )
     }
 }
 
@@ -113,8 +112,9 @@ struct DisconnectAllButton: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.red)
+                BlurEffect()
+                    .blurEffectStyle(.systemMaterialDark)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             )
             .buttonStyle(PlainButtonStyle())
     }
