@@ -6,12 +6,11 @@
 //
 
 import SwiftUI
-import CoreBluetooth
 internal import SwiftUIVisualEffects
 
 // MARK: - Hero Status Card
 struct HeroStatusCard: View {
-    let bluetoothState: CBManagerState
+    let bluetoothState: BluetoothManager.BluetoothManagerState
     let connectedCount: Int
     
     var body: some View {
@@ -29,7 +28,7 @@ struct HeroStatusCard: View {
 
 // MARK: - Bluetooth Status View
 struct BluetoothStatusView: View {
-    let state: CBManagerState
+    let state: BluetoothManager.BluetoothManagerState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -93,7 +92,7 @@ struct ConnectedDevicesBadge: View {
         .padding(.vertical, 8)
         .background(
             BlurEffect()
-                .blurEffectStyle(count > 0 ? .systemMaterialLight : .systemMaterialDark)
+                .blurEffectStyle(.systemMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
         )
     }

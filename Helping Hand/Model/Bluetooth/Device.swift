@@ -23,4 +23,12 @@ struct Device: Codable, Identifiable {
         self.dateAdded = Date()
         self.lastSeen = Date()
     }
+    
+    init(name: String? = nil, identifier: UUID) {
+        self.id = UUID()
+        self.name = name ?? "Unknown Device"
+        self.identifier = identifier
+        self.dateAdded = Date()
+        self.lastSeen = Date()
+    }
 }

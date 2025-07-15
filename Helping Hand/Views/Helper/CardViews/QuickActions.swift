@@ -6,19 +6,22 @@
 //
 
 import SwiftUI
-import CoreBluetooth
 internal import SwiftUIVisualEffects
 
 // MARK: - Quick Actions Card
 struct QuickActionsCard: View {
-    let isScanning: Bool
-    let bluetoothState: CBManagerState
     let hasConnectedDevices: Bool
     let onScanToggle: () -> Void
     let onDisconnectAll: () -> Void
     let onPair: () -> Void
     let onConnectAll: () -> Void
     let onUpdateAll: () -> Void
+    
+    // Section enabled status
+    var connectAllEnabled: Bool = true
+    var disconnectAllEnabled: Bool = false
+    var pairEnabled: Bool = true
+    var updateAllEnabled: Bool = true
     
     var body: some View {
         CardView {
@@ -27,23 +30,25 @@ struct QuickActionsCard: View {
                 
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 2), spacing: 6) {
                     ConnectAllButton(
-                        bluetoothState: bluetoothState,
-                        action: onConnectAll
+                        action: onConnectAll,
+                        isEnabled: connectAllEnabled
                     )
                     
                     DisconnectAllButton(
                         hasConnectedDevices: hasConnectedDevices,
-                        action: onDisconnectAll
+                        action: onDisconnectAll,
+                        isEnabled: disconnectAllEnabled
                     )
                     
                     PairDeviceButton(
-                        bluetoothState: bluetoothState,
-                        action: onPair
+                        action: onPair,
+                        isEnabled: pairEnabled
                     )
                     
                     UpdateAllButton(
                         hasConnectedDevices: hasConnectedDevices,
-                        action: onUpdateAll
+                        action: onUpdateAll,
+                        isEnabled: updateAllEnabled
                     )
                 }
             }
@@ -53,9 +58,9 @@ struct QuickActionsCard: View {
 
 // MARK: - Connect All Button
 struct ConnectAllButton: View {
-    let bluetoothState: CBManagerState
-    let isEnabled: Bool = true
     let action: () -> Void
+    var isEnabled: Bool = true
+
     
     var body: some View {
         QuickActionButton(
@@ -64,7 +69,7 @@ struct ConnectAllButton: View {
             title: "Connect All",
             subtitle: "Link devices",
             borderColor: .blue,
-            isEnabled: isEnabled && bluetoothState == .poweredOn,
+            isEnabled: isEnabled,
             action: action
         )
     }
@@ -73,8 +78,8 @@ struct ConnectAllButton: View {
 // MARK: - Disconnect All Button
 struct DisconnectAllButton: View {
     let hasConnectedDevices: Bool
-    let isEnabled: Bool = true
     let action: () -> Void
+    var isEnabled: Bool = true
     
     var body: some View {
         QuickActionButton(
@@ -91,9 +96,8 @@ struct DisconnectAllButton: View {
 
 // MARK: - Pair Device Button
 struct PairDeviceButton: View {
-    let bluetoothState: CBManagerState
-    let isEnabled: Bool = true
     let action: () -> Void
+    var isEnabled: Bool = true
     
     var body: some View {
         QuickActionButton(
@@ -102,7 +106,7 @@ struct PairDeviceButton: View {
             title: "Pair Device",
             subtitle: "Connect new",
             borderColor: .green,
-            isEnabled: isEnabled && bluetoothState == .poweredOn,
+            isEnabled: isEnabled,
             action: action
         )
     }
@@ -111,8 +115,8 @@ struct PairDeviceButton: View {
 // MARK: - Update All Button
 struct UpdateAllButton: View {
     let hasConnectedDevices: Bool
-    let isEnabled: Bool = true
     let action: () -> Void
+    var isEnabled: Bool = true
     
     var body: some View {
         QuickActionButton(
@@ -124,80 +128,5 @@ struct UpdateAllButton: View {
             isEnabled: isEnabled && hasConnectedDevices,
             action: action
         )
-    }
-}
-
-// MARK: - Quick Action Button Component
-struct QuickActionButton: View {
-    let icon: String
-    let iconColor: Color
-    let title: String
-    let subtitle: String
-    let borderColor: Color
-    let isEnabled: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                QuickActionButtonIcon(
-                    icon: icon,
-                    iconColor: iconColor,
-                    isEnabled: isEnabled
-                )
-                
-                QuickActionButtonText(
-                    title: title,
-                    subtitle: subtitle,
-                    isEnabled: isEnabled
-                )
-            }
-            .padding(8)
-            .frame(maxWidth: .infinity)
-            .background(
-                BlurEffect()
-                    .blurEffectStyle(.systemUltraThinMaterialDark)
-                    .opacity(isEnabled ? 1.0 : 0.5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(isEnabled ? borderColor : Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(!isEnabled)
-    }
-    
-    // MARK: - Quick Action Button Components
-    struct QuickActionButtonIcon: View {
-        let icon: String
-        let iconColor: Color
-        let isEnabled: Bool
-        
-        var body: some View {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(isEnabled ? iconColor : .gray)
-        }
-    }
-    
-    struct QuickActionButtonText: View {
-        let title: String
-        let subtitle: String
-        let isEnabled: Bool
-        
-        var body: some View {
-            VStack(spacing: 1) {
-                Text(title)
-                    .font(.caption2)
-                    .fontWeight(.medium)
-                    .foregroundColor(isEnabled ? .primary : .gray)
-                
-                Text(subtitle)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-            }
-        }
     }
 }

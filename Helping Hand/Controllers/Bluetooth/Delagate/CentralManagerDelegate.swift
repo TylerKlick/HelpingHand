@@ -5,7 +5,20 @@ import os
 extension BluetoothManager: CBCentralManagerDelegate {
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        bluetoothState = central.state
+        switch(central.state) {
+            case .poweredOn:
+                bluetoothState = .poweredOn
+            case .poweredOff:
+                bluetoothState = .poweredOff
+            case .unauthorized:
+                bluetoothState = .unauthorized
+            case .resetting:
+                bluetoothState = .resetting
+            case .unsupported:
+                bluetoothState = .unsupported
+            default:
+                bluetoothState = .unknown
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
@@ -37,6 +50,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     
     // MARK: - Helper Methods
     private func handleConnectionError(for peripheral: CBPeripheral, error: Error?) {
+                
         if let error = error {
             os_log("Connection error for %@: %@", peripheral, error.localizedDescription)
         }
@@ -46,7 +60,10 @@ extension BluetoothManager: CBCentralManagerDelegate {
     }
     
     private func handleDisconnection(for peripheral: CBPeripheral, error: Error?) {
-        peripheralInfo[peripheral]?.validationTimer?.invalidate()
+        
+        let peripheralIdentifier = peripheral.identifier
+
+        peripheralInfo[peripheralIdentifier]?.validationTimer?.invalidate()
         updateConnectionState(for: peripheral, state: .disconnected)
         
         if let error = error {
@@ -54,7 +71,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
         
         // If peripheral was validating and disconnected unexpectedly, mark as invalid
-        if let info = peripheralInfo[peripheral],
+        if let info = peripheralInfo[peripheralIdentifier],
            info.validationState == .validating {
             handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
         }

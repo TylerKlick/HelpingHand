@@ -32,61 +32,62 @@ struct ContentView: View {
             ) {
                 
                 MeshGradientBackground()
-                .ignoresSafeArea()
-                .overlay(
-                    BluetoothView()
-                ) 
-            }, CustomTabItem(
-                systemImageName: "house",
-                title: "Home",
-                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-            ) {
-                
-                FluidGradient(
-                    blobs: [.purple, .cyan, .indigo],
-                    highlights: [.green.opacity(0.8)],
-                    speed: 0.1,
-                    blur: 0.9
-                )
-                .ignoresSafeArea()
-                .overlay(
-                    BluetoothView()
-                )
-            },
-            CustomTabItem(
-                systemImageName: "house",
-                title: "Home",
-                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-            ) {
-                
-                FluidGradient(
-                    blobs: [.purple, .cyan, .indigo],
-                    highlights: [.green.opacity(0.8)],
-                    speed: 0.1,
-                    blur: 0.9
-                )
-                .ignoresSafeArea()
-                .overlay(
-                    BluetoothView()
-                )
-            },
-            CustomTabItem(
-                systemImageName: "house",
-                title: "Home",
-                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-            ) {
-                
-                FluidGradient(
-                    blobs: [.purple, .cyan, .indigo],
-                    highlights: [.green.opacity(0.8)],
-                    speed: 0.1,
-                    blur: 0.9
-                )
-                .ignoresSafeArea()
-                .overlay(
-                    BluetoothView()
-                )
+                    .ignoresSafeArea()
+                    .overlay(
+                        BluetoothView()
+                    )
             }
+//            }, CustomTabItem(
+//                systemImageName: "house",
+//                title: "Home",
+//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+//            ) {
+//                
+//                FluidGradient(
+//                    blobs: [.purple, .cyan, .indigo],
+//                    highlights: [.green.opacity(0.8)],
+//                    speed: 0.1,
+//                    blur: 0.9
+//                )
+//                .ignoresSafeArea()
+//                .overlay(
+//                    BluetoothView()
+//                )
+//            },
+//            CustomTabItem(
+//                systemImageName: "house",
+//                title: "Home",
+//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+//            ) {
+//                
+//                FluidGradient(
+//                    blobs: [.purple, .cyan, .indigo],
+//                    highlights: [.green.opacity(0.8)],
+//                    speed: 0.1,
+//                    blur: 0.9
+//                )
+//                .ignoresSafeArea()
+//                .overlay(
+//                    BluetoothView()
+//                )
+//            },
+//            CustomTabItem(
+//                systemImageName: "house",
+//                title: "Home",
+//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+//            ) {
+//                
+//                FluidGradient(
+//                    blobs: [.purple, .cyan, .indigo],
+//                    highlights: [.green.opacity(0.8)],
+//                    speed: 0.1,
+//                    blur: 0.9
+//                )
+//                .ignoresSafeArea()
+//                .overlay(
+//                    BluetoothView()
+//                )
+//            }
         ]
         
         CustomTabView(items: tabItems)
@@ -96,4 +97,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(BluetoothManagerSingleton.shared)
 }

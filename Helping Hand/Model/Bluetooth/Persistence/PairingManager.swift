@@ -158,9 +158,7 @@ class DevicePairingManager: ObservableObject {
     // MARK: - Utility
     func getPairedDevicesList() -> [Device] {
         let sortedDevices = self.pairedDevices.sorted { $0.lastSeen > $1.lastSeen }
-        
         logger.debug("Returning list of \(sortedDevices.count) paired devices sorted by last seen")
-        
         return sortedDevices
     }
 }

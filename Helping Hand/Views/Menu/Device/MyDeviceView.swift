@@ -11,49 +11,48 @@ internal import SwiftUIVisualEffects
 
 // MARK: - Main Bluetooth View
 struct BluetoothView: View {
-    @StateObject private var bluetoothManager = BluetoothManagerSingleton.shared
-    @State private var selectedDevice: CBPeripheral?
+    
+    @EnvironmentObject private var bluetoothManager: BluetoothManager
+    @State private var selectedDevice: Device?
     @State private var showingDeviceDetail = false
     
     var body: some View {
         ZStack {
-            // Background layer - you can customize this
             Color.clear
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Custom Navigation Header
                 CustomNavigationHeader(title: "Helping Hand")
                 
-                // Main Content
                 ScrollView {
                     VStack(spacing: 16) {
                         HeroStatusCard(
                             bluetoothState: bluetoothManager.bluetoothState,
                             connectedCount: connectedDevicesCount
                         )
-
                         
                         QuickActionsCard(
-                            isScanning: true,
-                            bluetoothState: .poweredOn,
                             hasConnectedDevices: true,
-                            onScanToggle: { /* action */ },
+                            onScanToggle: { bluetoothManager.loadPairedDevices()},
                             onDisconnectAll: { /* action */ },
-                            onPair: {},
+                            onPair: { bluetoothManager.loadPairedDevices()},
                             onConnectAll: {},
-                            onUpdateAll: {}
+                            onUpdateAll: {},
+                            connectAllEnabled: bluetoothManager.pairedDevices.count > 0 && bluetoothManager.bluetoothState == .poweredOn,
+                            disconnectAllEnabled: bluetoothManager.pairedDevices.contains(where: { bluetoothManager.isConnected($0) }) && bluetoothManager.bluetoothState == .poweredOn,
+                            pairEnabled: bluetoothManager.bluetoothState == .poweredOn,
+                            updateAllEnabled: bluetoothManager.pairedDevices.contains(where: { bluetoothManager.isConnected($0) }) && bluetoothManager.bluetoothState == .poweredOn
+                            
                         )
                         
                         DeviceListCard(
                             title: "Paired Devices",
-                            devices: pairedDevices,
+                            devices: bluetoothManager.pairedDevices,
                             emptyMessage: "No Paired Devices",
                             emptySubtitle: "Previously connected devices will appear here",
                             showCount: false,
                             onDeviceSelect: { device in
                                 selectedDevice = device
-                                showingDeviceDetail = true
                             },
                             connectionAction: bluetoothManager.connect,
                             connectionState: bluetoothManager.getConnectionState
@@ -69,15 +68,6 @@ struct BluetoothView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingDeviceDetail) {
-            if let device = selectedDevice {
-                DeviceDetailView(device: device)
-            }
-        }
-        .onAppear() {
-            UITableView.appearance().backgroundColor = .clear
-            UITableViewCell.appearance().backgroundColor = .clear
-        }
     }
     
     // MARK: - Helper Functions
@@ -85,20 +75,17 @@ struct BluetoothView: View {
         bluetoothManager.isScanning ? bluetoothManager.stopScanning() : bluetoothManager.startScanning()
     }
     
-    private var connectedDevices: [CBPeripheral] {
-        bluetoothManager.discoveredPeripherals.filter(bluetoothManager.isConnected)
+    private var connectedDevices: [Device] {
+        bluetoothManager.pairedDevices.filter(bluetoothManager.isConnected)
     }
     
-    private var pairedDevices: [CBPeripheral] {
-        let pairedDeviceIds = bluetoothManager.getPairedDeviceIdentifiers()
-        return bluetoothManager.discoveredPeripherals.filter { peripheral in
-            pairedDeviceIds.contains(peripheral.identifier)
-        }
+    private var pairedDevices: [Device] {
+        return bluetoothManager.pairedDevices
     }
     
-    private var discoveredDevices: [CBPeripheral] {
+    private var discoveredDevices: [Device] {
         let pairedDeviceIds = bluetoothManager.getPairedDeviceIdentifiers()
-        return bluetoothManager.discoveredPeripherals.filter { peripheral in
+        return bluetoothManager.pairedDevices.filter { peripheral in
             !pairedDeviceIds.contains(peripheral.identifier) && !bluetoothManager.isConnected(peripheral)
         }
     }
@@ -120,9 +107,6 @@ struct CustomNavigationHeader: View {
                 .foregroundColor(.primary)
             
             Spacer()
-            
-            // Optional: Add navigation buttons here if needed
-            // Button("Settings") { }
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
