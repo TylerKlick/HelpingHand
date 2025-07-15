@@ -15,24 +15,7 @@ class DevicePairingManager: ObservableObject {
     // MARK: - Logging
     private let logger = Logger(subsystem: "com.helpinghand.app", category: "DevicePairingManager")
     
-    // MARK: - Paired Device Info
-    struct PairedDevice: Codable, Identifiable {
-        let id: UUID
-        let name: String
-        let identifier: UUID
-        let dateAdded: Date
-        var lastSeen: Date
-        
-        init(peripheral: CBPeripheral) {
-            self.id = UUID()
-            self.name = peripheral.name ?? "Unknown Device"
-            self.identifier = peripheral.identifier
-            self.dateAdded = Date()
-            self.lastSeen = Date()
-        }
-    }
-    
-    @Published var pairedDevices: [PairedDevice] = []
+    @Published var pairedDevices: [Device] = []
     
     private let userDefaults = UserDefaults.standard
     private let pairedDevicesKey = "PairedBluetoothDevices"
@@ -47,7 +30,7 @@ class DevicePairingManager: ObservableObject {
         logger.debug("Loading paired devices from UserDefaults")
         
         if let data = userDefaults.data(forKey: pairedDevicesKey),
-           let decoded = try? JSONDecoder().decode([PairedDevice].self, from: data) {
+           let decoded = try? JSONDecoder().decode([Device].self, from: data) {
             pairedDevices = decoded
             logger.info("Successfully loaded \(decoded.count) paired devices from storage")
             
@@ -84,7 +67,7 @@ class DevicePairingManager: ObservableObject {
             return
         }
         
-        let pairedDevice = PairedDevice(peripheral: peripheral)
+        let pairedDevice = Device(peripheral: peripheral)
         pairedDevices.append(pairedDevice)
         savePairedDevices()
         
@@ -127,7 +110,7 @@ class DevicePairingManager: ObservableObject {
         return paired
     }
     
-    func getPairedDevice(for peripheral: CBPeripheral) -> PairedDevice? {
+    func getPairedDevice(for peripheral: CBPeripheral) -> Device? {
         let deviceName = peripheral.name ?? "Unknown Device"
         let deviceId = peripheral.identifier.uuidString
         let pairedDevice = self.pairedDevices.first { $0.identifier == peripheral.identifier }
@@ -173,7 +156,7 @@ class DevicePairingManager: ObservableObject {
     }
     
     // MARK: - Utility
-    func getPairedDevicesList() -> [PairedDevice] {
+    func getPairedDevicesList() -> [Device] {
         let sortedDevices = self.pairedDevices.sorted { $0.lastSeen > $1.lastSeen }
         
         logger.debug("Returning list of \(sortedDevices.count) paired devices sorted by last seen")

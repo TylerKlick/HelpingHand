@@ -258,3 +258,32 @@ struct DeviceActions: View {
         }
     }
 }
+
+#Preview("Empty"){
+    DeviceListCard(
+        title: "Empty List",
+        devices: [],
+        emptyMessage: "Empty",
+        emptySubtitle: "Empty",
+        showCount: true,
+        connectionAction: { _ in },
+        connectionState: { _ in .disconnected }
+    )
+}
+
+struct MockPeripheral: Identifiable {
+    let id = UUID()
+    let name: String
+}
+
+#Preview ("Populated"){
+    DeviceListCard(
+        title: "Empty List",
+        devices: [CBPeripheral(],
+        emptyMessage: "Empty",
+        emptySubtitle: "Empty",
+        showCount: true,
+        connectionAction: { _ in },
+        connectionState: { _ in .disconnected }
+    )
+}

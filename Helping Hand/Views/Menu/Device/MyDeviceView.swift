@@ -35,22 +35,14 @@ struct BluetoothView: View {
 
                         
                         QuickActionsCard(
-                            isScanning: bluetoothManager.isScanning,
-                            bluetoothState: bluetoothManager.bluetoothState,
-                            hasConnectedDevices: connectedDevicesCount > 0,
-                            onScanToggle: toggleScanning,
-                            onDisconnectAll: bluetoothManager.disconnectAll
-                        )
-                        
-                        DeviceListCard(
-                            title: "Connected Devices",
-                            devices: connectedDevices,
-                            emptyMessage: "No Connected Devices",
-                            emptySubtitle: "Connect to paired devices or discover new ones",
-                            showCount: true,
-                            onDeviceSelect: nil,
-                            connectionAction: bluetoothManager.disconnect,
-                            connectionState: bluetoothManager.getConnectionState
+                            isScanning: true,
+                            bluetoothState: .poweredOn,
+                            hasConnectedDevices: true,
+                            onScanToggle: { /* action */ },
+                            onDisconnectAll: { /* action */ },
+                            onPair: {},
+                            onConnectAll: {},
+                            onUpdateAll: {}
                         )
                         
                         DeviceListCard(
@@ -59,21 +51,6 @@ struct BluetoothView: View {
                             emptyMessage: "No Paired Devices",
                             emptySubtitle: "Previously connected devices will appear here",
                             showCount: false,
-                            onDeviceSelect: { device in
-                                selectedDevice = device
-                                showingDeviceDetail = true
-                            },
-                            connectionAction: bluetoothManager.connect,
-                            connectionState: bluetoothManager.getConnectionState
-                        )
-                        
-                        DeviceListCard(
-                            title: "Discovered Devices",
-                            devices: discoveredDevices,
-                            emptyMessage: "No Devices Found",
-                            emptySubtitle: bluetoothManager.isScanning ? "Searching for devices..." : "Tap 'Start Scanning' to discover devices",
-                            showCount: false,
-                            isScanning: bluetoothManager.isScanning,
                             onDeviceSelect: { device in
                                 selectedDevice = device
                                 showingDeviceDetail = true
