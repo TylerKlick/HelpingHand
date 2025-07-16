@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeviceList: View {
+    
     @EnvironmentObject private var bluetoothManager: BluetoothManager
     let isPairedList: Bool
     let onDeviceSelect: ((Device) -> Void)?
@@ -15,6 +16,11 @@ struct DeviceList: View {
     let devices: [Device]
     
     var body: some View {
+        
+        let _ = Self._printChanges()
+
+        
+        
         ForEach(devices, id: \.identifier) { device in
             DeviceCard(
                 device: device,

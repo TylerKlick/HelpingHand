@@ -8,13 +8,7 @@
 import SwiftUI
 
 // MARK: - Quick Actions Card
-struct QuickActionsCard: View, Equatable {
-    
-    static func == (lhs: QuickActionsCard, rhs: QuickActionsCard) -> Bool {
-        return lhs.hasConnectedDevices == rhs.hasConnectedDevices && lhs.connectAllEnabled == rhs.connectAllEnabled &&
-        lhs.disconnectAllEnabled == rhs.disconnectAllEnabled && lhs.pairEnabled == rhs.pairEnabled &&
-        lhs.updateAllEnabled == rhs.updateAllEnabled
-    }
+struct QuickActionsCard: View {
     
     let hasConnectedDevices: Bool
     let onScanToggle: () -> Void

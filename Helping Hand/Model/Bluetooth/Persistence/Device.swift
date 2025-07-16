@@ -9,11 +9,7 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - Paired Device Info
-class Device: Codable, Identifiable, ObservableObject, Equatable {
-    static func == (lhs: Device, rhs: Device) -> Bool {
-        return lhs.identifier == rhs.identifier && lhs.connectionState == rhs.connectionState
-    }
-    
+class Device: Codable, Identifiable, ObservableObject {
     
     // MARK: - Parameters to save in storage
     let id: UUID
@@ -23,7 +19,7 @@ class Device: Codable, Identifiable, ObservableObject, Equatable {
     var lastSeen: Date
     
     // MARK: - Parameters only used at runtime (not saved)
-    @Published var connectionState: DeviceConnectionState = .disconnected
+    var connectionState: DeviceConnectionState = .disconnected
     var validationTimer: Timer?
     var responseTimer: Timer?
     
