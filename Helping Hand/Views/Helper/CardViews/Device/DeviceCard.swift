@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct DeviceCard: View {
-    let device: Device
-    let connectionState: DeviceConnectionState
+    @ObservedObject var device: Device
     let isPaired: Bool
     let onTap: (() -> Void)?
     let onConnectionAction: () -> Void
@@ -17,7 +16,7 @@ struct DeviceCard: View {
     var body: some View {
         let content = HStack(spacing: 16) {
             DeviceIcon(
-                connectionState: connectionState,
+                connectionState: device.connectionState,
                 isPaired: isPaired
             )
 
@@ -29,7 +28,7 @@ struct DeviceCard: View {
             Spacer()
 
             DeviceActions(
-                connectionState: connectionState,
+                connectionState: device.connectionState,
                 onConnectionAction: onConnectionAction
             )
         }
@@ -51,7 +50,7 @@ struct DeviceCard: View {
     }
 
     private var borderColor: Color {
-        switch connectionState {
+        switch device.connectionState {
         case .connected: return .green.opacity(0.3)
         case .connecting, .validating: return .orange.opacity(0.3)
         case .validationFailed: return .red.opacity(0.3)

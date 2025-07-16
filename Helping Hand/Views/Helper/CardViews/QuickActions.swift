@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
-internal import SwiftUIVisualEffects
 
 // MARK: - Quick Actions Card
-struct QuickActionsCard: View {
+struct QuickActionsCard: View, Equatable {
+    
+    static func == (lhs: QuickActionsCard, rhs: QuickActionsCard) -> Bool {
+        return lhs.hasConnectedDevices == rhs.hasConnectedDevices && lhs.connectAllEnabled == rhs.connectAllEnabled &&
+        lhs.disconnectAllEnabled == rhs.disconnectAllEnabled && lhs.pairEnabled == rhs.pairEnabled &&
+        lhs.updateAllEnabled == rhs.updateAllEnabled
+    }
+    
     let hasConnectedDevices: Bool
     let onScanToggle: () -> Void
     let onDisconnectAll: () -> Void
@@ -24,6 +30,9 @@ struct QuickActionsCard: View {
     var updateAllEnabled: Bool = true
     
     var body: some View {
+        
+        let _ = Self._printChanges()
+
         CardView {
             VStack(spacing: 12) {
                 CardHeader(title: "Quick Actions")

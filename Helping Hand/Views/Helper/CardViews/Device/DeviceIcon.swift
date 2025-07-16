@@ -22,6 +22,7 @@ struct DeviceIcon: View {
                     .blurEffectStyle(.systemUltraThinMaterial)
                     .clipShape(Circle())
             )
+            .animation(.easeInOut(duration: 0.2), value: connectionState)
     }
     
     private var iconName: String {

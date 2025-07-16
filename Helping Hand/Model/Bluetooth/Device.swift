@@ -9,7 +9,11 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - Paired Device Info
-class Device: Codable, Identifiable, ObservableObject {
+class Device: Codable, Identifiable, ObservableObject, Equatable {
+    static func == (lhs: Device, rhs: Device) -> Bool {
+        return lhs.identifier == rhs.identifier && lhs.connectionState == rhs.connectionState
+    }
+    
     
     // MARK: - Parameters to save in storage
     let id: UUID

@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Device List Card
 struct DeviceListCard: View {
     let title: String
     let devices: [Device]
@@ -17,7 +16,6 @@ struct DeviceListCard: View {
     let isScanning: Bool?
     let onDeviceSelect: ((Device) -> Void)?
     let connectionAction: (Device) -> Void
-    let connectionState: (Device) -> DeviceConnectionState
     @EnvironmentObject var bluetoothManager: BluetoothManager
     
     init(
@@ -28,8 +26,7 @@ struct DeviceListCard: View {
         showCount: Bool,
         isScanning: Bool? = nil,
         onDeviceSelect: ((Device) -> Void)? = nil,
-        connectionAction: @escaping (Device) -> Void,
-        connectionState: @escaping (Device) -> DeviceConnectionState
+        connectionAction: @escaping (Device) -> Void
     ) {
         self.title = title
         self.devices = devices
@@ -39,7 +36,6 @@ struct DeviceListCard: View {
         self.isScanning = isScanning
         self.onDeviceSelect = onDeviceSelect
         self.connectionAction = connectionAction
-        self.connectionState = connectionState
     }
     
     var body: some View {
@@ -60,11 +56,10 @@ struct DeviceListCard: View {
                     )
                 } else {
                     DeviceList(
-                        devices: devices,
                         isPairedList: title == "Paired Devices",
                         onDeviceSelect: onDeviceSelect,
                         connectionAction: connectionAction,
-                        connectionState: {_ in return .connected}
+                        devices: devices
                     )
                 }
             }

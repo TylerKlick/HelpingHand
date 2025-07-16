@@ -21,9 +21,9 @@ class BluetoothManager: NSObject, ObservableObject {
     
     // MARK: - Published State
     @Published var bluetoothState: BluetoothManagerState = .unknown
-    @Published var pairedDevices: [UUID] = []
+    @Published var pairedDevices: [Device] = []
     @Published var peripheralInfo: [UUID: Device] = [:]
-    @Published var receivedData: [String] = []
+    var receivedData: [String] = []
     @Published var isScanning = false
     
     override init() {
@@ -33,7 +33,7 @@ class BluetoothManager: NSObject, ObservableObject {
         loadPairedDevices()
     }
     
-    func loadPairedDevices() {        
+    func loadPairedDevices() {
         let pairedDevices = pairingManager.getPairedDevicesList()
         
         // Retrieve peripherals using their identifiers
@@ -48,7 +48,9 @@ class BluetoothManager: NSObject, ObservableObject {
         
         // Update the pairedDevices array with Device objects
         DispatchQueue.main.async {
-            self.pairedDevices = pairedDevices.map{ $0.identifier }
+            self.pairedDevices = []
+            self.pairedDevices.append(contentsOf: pairedDevices)
+            self.objectWillChange.send()
         }
         
         os_log("Loaded %d paired devices", pairedDevices.count)
@@ -59,14 +61,26 @@ class BluetoothManager: NSObject, ObservableObject {
         guard bluetoothState == .poweredOn else { return }
         
         // Clear discovered peripherals but keep paired devices
-        let pairedIdentifiers = Set(pairedDevices)
+        let pairedIdentifiers = Set(pairedDevices.map { $0.identifier })
         peripheralInfo = peripheralInfo.filter { pairedIdentifiers.contains($0.key) }
         centralManager.scanForPeripherals(withServices: CBUUIDs.serviceUUIDs)
+        
+        DispatchQueue.main.async {
+            self.isScanning = true
+            self.objectWillChange.send()
+        }
+        
         os_log("Started scanning for peripherals")
     }
     
     func stopScanning() {
         centralManager.stopScan()
+        
+        DispatchQueue.main.async {
+            self.isScanning = false
+            self.objectWillChange.send()
+        }
+        
         os_log("Stopped scanning")
     }
     
@@ -88,25 +102,30 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     internal func connect(to peripheral: CBPeripheral) {
-        
         let peripheralIdentifier = peripheral.identifier
         
         if peripheralInfo[peripheralIdentifier] == nil {
             peripheralInfo[peripheralIdentifier] = Device(peripheral)
         }
         
+        // Force immediate UI update
         updateConnectionState(for: peripheral, state: .connecting)
-        peripheralInfo[peripheralIdentifier]?.connectionState = .validating
+        updateDeviceConnectionState(for: peripheralIdentifier, state: .validating)
         
         // Start validation timer
         let timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
             self?.handleValidationTimeout(for: peripheral)
         }
-        peripheralInfo[peripheralIdentifier]?.validationTimer = timer
+        updateDeviceValidationTimer(for: peripheralIdentifier, timer: timer)
         
         centralManager.connect(peripheral, options: nil)
         os_log("Attempting to connect to %@", peripheral)
         pairingManager.pairDevice(peripheral)
+        
+        // Force UI update for hero card and quick actions
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
     }
     
     func disconnect(_ device: Device) {
@@ -133,30 +152,109 @@ class BluetoothManager: NSObject, ObservableObject {
         
         os_log("Disconnecting from %@", peripheral)
         centralManager.cancelPeripheralConnection(peripheral)
+        
+        // Force UI update
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
     }
     
     func disconnectAll() {
         for device in pairedDevices {
-            guard let info = peripheralInfo[device] else { continue }
+            guard let info = peripheralInfo[device.identifier] else { continue }
             disconnect(info)
         }
     }
     
     func getPairedDeviceIdentifiers() -> Set<UUID> {
-        return Set(pairedDevices)
+        return Set(pairedDevices.map{ $0.identifier })
+    }
+    
+    // MARK: - Device Access Methods
+    /// Get a device that can be observed for UI updates
+    func getObservableDevice(for identifier: UUID) -> Device? {
+        return peripheralInfo[identifier]
+    }
+    
+    /// Get the current connection state for a device
+    func getConnectionState(for identifier: UUID) -> DeviceConnectionState {
+        return peripheralInfo[identifier]?.connectionState ?? .disconnected
+    }
+    
+    /// Check if a device is currently connected
+    func isDeviceConnected(_ identifier: UUID) -> Bool {
+        return peripheralInfo[identifier]?.connectionState == .connected
+    }
+    
+    /// Get all devices (both paired and discovered) for hero card
+    func getAllDevices() -> [Device] {
+        return Array(peripheralInfo.values)
+    }
+    
+    /// Get connected devices for quick actions
+    func getConnectedDevices() -> [Device] {
+        return peripheralInfo.values.filter { $0.connectionState == .connected }
+    }
+    
+    /// Get discovered devices (not paired)
+    func getDiscoveredDevices() -> [Device] {
+        let pairedIdentifiers = Set(pairedDevices.map { $0.identifier })
+        return peripheralInfo.values.filter { !pairedIdentifiers.contains($0.identifier) }
     }
     
     // MARK: - Internal Helper Methods
     internal func addDiscoveredPeripheral(_ peripheral: CBPeripheral) {
         let peripheralIdentifier = peripheral.identifier
         guard peripheralInfo[peripheralIdentifier] == nil else { return }
-        peripheralInfo[peripheralIdentifier] = Device(peripheral)
+        
+        DispatchQueue.main.async {
+            self.peripheralInfo[peripheralIdentifier] = Device(peripheral)
+            self.objectWillChange.send()
+        }
+    }
+    
+    // MARK: - Enhanced Update Methods
+    private func updateDeviceInBothStructures(identifier: UUID, updateBlock: @escaping (inout Device) -> Void) {
+        DispatchQueue.main.async {
+            // Update peripheralInfo first
+            if var device = self.peripheralInfo[identifier] {
+                updateBlock(&device)
+                self.peripheralInfo[identifier] = device
+            }
+            
+            // Update pairedDevices array
+            if let index = self.pairedDevices.firstIndex(where: { $0.identifier == identifier }) {
+                var device = self.pairedDevices[index]
+                updateBlock(&device)
+                self.pairedDevices[index] = device
+            }
+            
+            // Force UI update
+            self.objectWillChange.send()
+        }
     }
     
     internal func updateConnectionState(for peripheral: CBPeripheral, state: DeviceConnectionState) {
-        DispatchQueue.main.async {
-            self.peripheralInfo[peripheral.identifier]?.connectionState = state
-//            self.objectWillChange.send()
+        let identifier = peripheral.identifier
+        
+        updateDeviceInBothStructures(identifier: identifier) { device in
+            device.connectionState = state
+        }
+        
+        os_log("Updated connection state for %@ to %@", peripheral, String(describing: state))
+    }
+    
+    internal func updateDeviceConnectionState(for identifier: UUID, state: DeviceConnectionState) {
+        updateDeviceInBothStructures(identifier: identifier) { device in
+            device.connectionState = state
+        }
+        
+        os_log("Updated connection state for device %@ to %@", identifier.uuidString, String(describing: state))
+    }
+    
+    internal func updateDeviceValidationTimer(for identifier: UUID, timer: Timer) {
+        updateDeviceInBothStructures(identifier: identifier) { device in
+            device.validationTimer = timer
         }
     }
     
@@ -166,11 +264,17 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     internal func handleValidationResult(for peripheral: CBPeripheral, isValid: Bool, reason: String = "") {
-        guard var info = peripheralInfo[peripheral.identifier] else { return }
+        let identifier = peripheral.identifier
+        guard var info = peripheralInfo[identifier] else { return }
         
         info.validationTimer?.invalidate()
         info.connectionState = isValid ? .validated : .validationFailed
-        peripheralInfo[peripheral.identifier] = info
+        
+        updateDeviceInBothStructures(identifier: identifier) { device in
+            device.validationTimer?.invalidate()
+            device.validationTimer = nil
+            device.connectionState = isValid ? .validated : .validationFailed
+        }
         
         let resultText = isValid ? "successful" : "failed"
         os_log("Peripheral validation %@: %@ %@", resultText, peripheral, reason)
@@ -203,6 +307,35 @@ class BluetoothManager: NSObject, ObservableObject {
             if self.receivedData.count > 50 {
                 self.receivedData.removeFirst()
             }
+            
+            self.objectWillChange.send()
+        }
+    }
+    
+    // MARK: - Convenience Methods for UI
+    /// Force refresh of all UI components
+    func forceUIUpdate() {
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
+    }
+    
+    /// Update last seen timestamp for a device
+    func updateLastSeen(for identifier: UUID) {
+        updateDeviceInBothStructures(identifier: identifier) { device in
+            device.lastSeen = Date()
+        }
+    }
+    
+    /// Get devices by connection state
+    func getDevices(byState state: DeviceConnectionState) -> [Device] {
+        return peripheralInfo.values.filter { $0.connectionState == state }
+    }
+    
+    /// Check if any device is connecting
+    func hasConnectingDevices() -> Bool {
+        return peripheralInfo.values.contains {
+            $0.connectionState == .connecting || $0.connectionState == .validating
         }
     }
 }

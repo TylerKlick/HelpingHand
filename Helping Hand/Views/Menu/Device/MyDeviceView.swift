@@ -30,7 +30,6 @@ struct BluetoothView: View {
                             bluetoothState: bluetoothManager.bluetoothState,
                             connectedCount: connectedDevicesCount
                         )
-                        
                         QuickActionsCard(
                             hasConnectedDevices: connectedDevicesCount > 0,
                             onScanToggle: { bluetoothManager.loadPairedDevices()},
@@ -43,6 +42,7 @@ struct BluetoothView: View {
                             pairEnabled: bluetoothManager.bluetoothState == .poweredOn,
                             updateAllEnabled: connectedDevices.count > 0 && bluetoothManager.bluetoothState == .poweredOn
                         )
+                        
                         
                         DeviceListCard(
                             title: "Paired Devices",
@@ -57,16 +57,8 @@ struct BluetoothView: View {
                             },
                             connectionAction: { device in
                                 bluetoothManager.connect(to: device)
-                            },
-                            connectionState: { device in
-                                return device.connectionState
                             }
-                        )
-                        
-                        DataStreamCard(
-                            data: bluetoothManager.receivedData,
-                            onClear: { bluetoothManager.receivedData.removeAll() }
-                        )
+                    )
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -93,16 +85,7 @@ struct BluetoothView: View {
     }
     
     private var pairedDevices: [Device] {
-        return bluetoothManager.pairedDevices.compactMap { uuid in
-            bluetoothManager.peripheralInfo[uuid]
-        }
-    }
-    
-    private var discoveredDevices: [Device] {
-        let pairedDeviceIds = Set(bluetoothManager.pairedDevices)
-        return bluetoothManager.peripheralInfo.values.filter { device in
-            !pairedDeviceIds.contains(device.identifier) && device.connectionState == .disconnected
-        }
+        return bluetoothManager.pairedDevices
     }
     
     private var connectedDevicesCount: Int {

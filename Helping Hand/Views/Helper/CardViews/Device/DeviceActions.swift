@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Device Actions
 struct DeviceActions: View {
     let connectionState: DeviceConnectionState
     let onConnectionAction: () -> Void
@@ -20,5 +19,7 @@ struct DeviceActions: View {
                 action: onConnectionAction
             )
         }
+        .animation(.easeInOut(duration: 0.2), value: connectionState)
     }
 }
+
