@@ -10,7 +10,7 @@ internal import SwiftUIVisualEffects
 
 // MARK: - Hero Status Card
 struct HeroStatusCard: View {
-    let bluetoothState: BluetoothManager.BluetoothManagerState
+    let bluetoothState: BluetoothManagerState
     let connectedCount: Int
     
     var body: some View {
@@ -28,7 +28,7 @@ struct HeroStatusCard: View {
 
 // MARK: - Bluetooth Status View
 struct BluetoothStatusView: View {
-    let state: BluetoothManager.BluetoothManagerState
+    let state: BluetoothManagerState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

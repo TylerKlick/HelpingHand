@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - Device Actions
 struct DeviceActions: View {
-    let connectionState: ConnectionState
+    let connectionState: DeviceConnectionState
     let onConnectionAction: () -> Void
     
     var body: some View {

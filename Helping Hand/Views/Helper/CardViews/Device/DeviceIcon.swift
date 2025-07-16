@@ -9,7 +9,7 @@ import SwiftUI
 internal import SwiftUIVisualEffects
 
 struct DeviceIcon: View {
-    let connectionState: ConnectionState
+    let connectionState: DeviceConnectionState
     let isPaired: Bool
     
     var body: some View {

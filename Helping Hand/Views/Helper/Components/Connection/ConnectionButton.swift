@@ -9,12 +9,11 @@ import SwiftUI
 internal import SwiftUIVisualEffects
 
 // MARK: - Connection State Typealias
-typealias ConnectionState = BluetoothManager.DeviceConnectionState
 
 
 // MARK: - Connection Button
 struct ConnectionButton: View {
-    let state: ConnectionState
+    let state: DeviceConnectionState
     let action: () -> Void
     
     var body: some View {
@@ -35,7 +34,7 @@ struct ConnectionButton: View {
     private var buttonText: String {
         switch state {
         case .disconnected: return "Connect"
-        case .connecting, .validating, .disconnecting: return "Cancel"
+        case .connecting, .validating, .validated, .disconnecting: return "Cancel"
         case .connected: return "Disconnect"
         case .validationFailed: return "Retry"
         }
@@ -44,7 +43,7 @@ struct ConnectionButton: View {
     private var buttonTextColor: Color {
         switch state {
         case .disconnected, .validationFailed: return .white
-        case .connecting, .validating, .disconnecting: return .orange
+        case .connecting, .validating, .validated, .disconnecting: return .orange
         case .connected: return .white
         }
     }
@@ -52,7 +51,7 @@ struct ConnectionButton: View {
     private var blurEffectStyle: UIBlurEffect.Style {
         switch state {
         case .disconnected, .validationFailed: return .systemMaterialDark
-        case .connecting, .validating, .disconnecting: return .systemUltraThinMaterial
+        case .connecting, .validating, .validated, .disconnecting: return .systemUltraThinMaterial
         case .connected: return .systemMaterialDark
         }
     }

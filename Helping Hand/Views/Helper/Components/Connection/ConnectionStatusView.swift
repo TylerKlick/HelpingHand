@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - Connection Status View
 struct ConnectionStatusView: View {
-    let state: ConnectionState
+    let state: DeviceConnectionState
     
     var body: some View {
         Group {
@@ -18,7 +18,7 @@ struct ConnectionStatusView: View {
                 StatusIndicator(color: .green, text: "Connected", showSpinner: false)
             case .connecting:
                 StatusIndicator(color: .orange, text: "Connecting", showSpinner: true)
-            case .validating:
+            case .validating, .validated:
                 StatusIndicator(color: .blue, text: "Validating", showSpinner: true)
             case .disconnecting:
                 StatusIndicator(color: .gray, text: "Disconnecting", showSpinner: true)

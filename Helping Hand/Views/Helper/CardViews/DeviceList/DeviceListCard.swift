@@ -17,7 +17,7 @@ struct DeviceListCard: View {
     let isScanning: Bool?
     let onDeviceSelect: ((Device) -> Void)?
     let connectionAction: (Device) -> Void
-    let connectionState: (Device) -> ConnectionState
+    let connectionState: (Device) -> DeviceConnectionState
     @EnvironmentObject var bluetoothManager: BluetoothManager
     
     init(
@@ -29,7 +29,7 @@ struct DeviceListCard: View {
         isScanning: Bool? = nil,
         onDeviceSelect: ((Device) -> Void)? = nil,
         connectionAction: @escaping (Device) -> Void,
-        connectionState: @escaping (Device) -> ConnectionState
+        connectionState: @escaping (Device) -> DeviceConnectionState
     ) {
         self.title = title
         self.devices = devices
@@ -64,7 +64,7 @@ struct DeviceListCard: View {
                         isPairedList: title == "Paired Devices",
                         onDeviceSelect: onDeviceSelect,
                         connectionAction: connectionAction,
-                        connectionState: bluetoothManager.getConnectionState
+                        connectionState: {_ in return .connected}
                     )
                 }
             }

@@ -67,7 +67,7 @@ class DevicePairingManager: ObservableObject {
             return
         }
         
-        let pairedDevice = Device(peripheral: peripheral)
+        let pairedDevice = Device(peripheral)
         pairedDevices.append(pairedDevice)
         savePairedDevices()
         

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DeviceCard: View {
     let device: Device
-    let connectionState: ConnectionState
+    let connectionState: DeviceConnectionState
     let isPaired: Bool
     let onTap: (() -> Void)?
     let onConnectionAction: () -> Void

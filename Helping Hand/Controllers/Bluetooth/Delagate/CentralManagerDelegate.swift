@@ -72,7 +72,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         
         // If peripheral was validating and disconnected unexpectedly, mark as invalid
         if let info = peripheralInfo[peripheralIdentifier],
-           info.validationState == .validating {
+           info.connectionState == .validating {
             handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
         }
     }
