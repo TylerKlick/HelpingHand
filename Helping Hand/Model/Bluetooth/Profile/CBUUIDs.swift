@@ -4,6 +4,7 @@
 import Foundation
 import CoreBluetooth
 
+/// S
 struct CBUUIDs {
     
     // MARK: - CCBUID Internal Structure
@@ -12,7 +13,8 @@ struct CBUUIDs {
         case write
         case read
     }
-
+    
+    /// Re[re
     struct BLECharacteristicSpec {
         let uuid: CBUUID
         let name: String

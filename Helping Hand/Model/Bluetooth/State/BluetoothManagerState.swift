@@ -5,6 +5,7 @@
 //  Created by Tyler Klick on 7/15/25.
 //
 
+/// Representation of the Bluetooth Central state
 public enum BluetoothManagerState {
     case unknown
     case resetting

@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - Paired Device Info
+/// Representation of Bluetooth Peripheral in static storage and at runtime
 class Device: Codable, Identifiable, ObservableObject {
     
     // MARK: - Parameters to save in storage
@@ -31,11 +31,7 @@ class Device: Codable, Identifiable, ObservableObject {
         case dateAdded
         case lastSeen
     }
-    
-    convenience init(_ peripheral: CBPeripheral) {
-        self.init(name: peripheral.name, identifier: peripheral.identifier)
-    }
-    
+
     init(name: String? = nil, identifier: UUID) {
         self.id = UUID()
         self.name = name ?? "Unknown Device"
@@ -43,5 +39,9 @@ class Device: Codable, Identifiable, ObservableObject {
         self.dateAdded = Date()
         self.lastSeen = Date()
         self.connectionState = .disconnected
+    }
+    
+    convenience init(_ peripheral: CBPeripheral) {
+        self.init(name: peripheral.name, identifier: peripheral.identifier)
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Tyler Klick on 7/15/25.
 //
 
+/// Stages of device connection through the BluetoothManager FSM
 public enum DeviceConnectionState {
     case disconnected
     case connecting

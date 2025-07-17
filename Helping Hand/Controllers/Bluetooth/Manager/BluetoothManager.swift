@@ -131,6 +131,7 @@ class BluetoothManager: NSObject, ObservableObject {
         }
     }
     
+    /// Helper block to reduce boilerplate operations and ensure dependent Views receive an update signal
     private func updateDeviceInBothStructures(identifier: UUID, updateBlock: @escaping (inout Device) -> Void) {
         DispatchQueue.main.async {
             if var device = self.peripheralInfo[identifier] {
