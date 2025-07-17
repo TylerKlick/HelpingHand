@@ -19,7 +19,7 @@ class Device: Codable, Identifiable, ObservableObject {
     var lastSeen: Date
     
     // MARK: - Parameters only used at runtime (not saved)
-    var connectionState: DeviceConnectionState = .disconnected
+    @Published var connectionState: DeviceConnectionState = .disconnected
     var validationTimer: Timer?
     var responseTimer: Timer?
     

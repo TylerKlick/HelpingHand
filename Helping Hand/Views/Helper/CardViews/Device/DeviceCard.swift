@@ -10,22 +10,28 @@ import SwiftUI
 struct DeviceCard: View {
     @ObservedObject var device: Device
     let isPaired: Bool
-    let onTap: (() -> Void)?
     let onConnectionAction: () -> Void
+    @State private var displayDetails: Bool = false
 
     var body: some View {
-        let content = HStack(spacing: 16) {
-            DeviceIcon(
-                connectionState: device.connectionState,
-                isPaired: isPaired
-            )
+        HStack(spacing: 16) {
+            HStack(spacing: 16) {
+                DeviceIcon(
+                    connectionState: device.connectionState,
+                    isPaired: isPaired
+                )
+                
+                DeviceInfo(
+                    device: device,
+                    isPaired: isPaired
+                )
 
-            DeviceInfo(
-                device: device,
-                isPaired: isPaired
-            )
-
-            Spacer()
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                self.displayDetails.toggle()
+            }
 
             DeviceActions(
                 connectionState: device.connectionState,
@@ -38,14 +44,8 @@ struct DeviceCard: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(borderColor, lineWidth: 1)
         )
-
-        if let onTap = onTap {
-            Button(action: onTap) {
-                content
-            }
-            .buttonStyle(PlainButtonStyle())
-        } else {
-            content
+        .fullScreenCover(isPresented: $displayDetails) {
+            DeviceDetailView(device: device)
         }
     }
 
@@ -57,4 +57,8 @@ struct DeviceCard: View {
         default: return isPaired ? .blue.opacity(0.2) : .clear
         }
     }
+}
+
+#Preview {
+    DeviceCard(device: Device(name: "testing", identifier: UUID()), isPaired: true, onConnectionAction: {} )
 }

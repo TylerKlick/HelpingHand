@@ -6,12 +6,12 @@
 //
 
 /// Stages of device connection through the BluetoothManager FSM
-public enum DeviceConnectionState {
-    case disconnected
-    case connecting
-    case connected
-    case disconnecting
-    case validating
-    case validated
-    case validationFailed
+public enum DeviceConnectionState: String {
+    case disconnected = "disconnected"
+    case connecting = "connecting"
+    case connected = "connected"
+    case disconnecting = "disconnecting"
+    case validating = "validating"
+    case validated = "validated"
+    case validationFailed = "validationFailed"
 }

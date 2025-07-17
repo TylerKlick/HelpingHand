@@ -19,13 +19,10 @@ struct DeviceList: View {
         
         let _ = Self._printChanges()
 
-        
-        
         ForEach(devices, id: \.identifier) { device in
             DeviceCard(
                 device: device,
                 isPaired: isPairedList,
-                onTap: onDeviceSelect != nil ? { onDeviceSelect?(device) } : nil,
                 onConnectionAction: { connectionAction(device) }
             )
             .environmentObject(device) // Pass device as environment object

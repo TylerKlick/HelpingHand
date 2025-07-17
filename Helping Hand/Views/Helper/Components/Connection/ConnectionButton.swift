@@ -17,18 +17,21 @@ struct ConnectionButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(buttonText, action: action)
-            .font(.caption)
-            .fontWeight(.medium)
-            .foregroundColor(buttonTextColor)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                BlurEffect()
-                    .blurEffectStyle(blurEffectStyle)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            )
-            .buttonStyle(PlainButtonStyle())
+        Button(action: action) {
+            Text(buttonText)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(buttonTextColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    BlurEffect()
+                        .blurEffectStyle(blurEffectStyle)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
     }
     
     private var buttonText: String {
@@ -55,4 +58,8 @@ struct ConnectionButton: View {
         case .connected: return .systemMaterialDark
         }
     }
+}
+
+#Preview {
+    ConnectionButton(state: .connected, action: {})
 }

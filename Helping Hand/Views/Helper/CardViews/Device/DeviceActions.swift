@@ -23,3 +23,6 @@ struct DeviceActions: View {
     }
 }
 
+#Preview {
+    DeviceActions(connectionState: .connected, onConnectionAction: {})
+}
