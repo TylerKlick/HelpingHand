@@ -7,7 +7,7 @@ struct Marker: Identifiable, Hashable {
 }
 
 struct Radar: View {
-    @State private var rotation: Double = 0
+    @State var rotation: Double = 1.0
     @State private var markers: [Marker] = []
 
     private var scannerTailColor: AngularGradient {
@@ -30,7 +30,7 @@ struct Radar: View {
 
             // MARK: - Markers with self-animating opacity
             ForEach(markers, id: \.id) { m in
-                RadarMarker(marker: m, color: color, markerSize: markerSize, scannerSpeed: scannerSpeed)
+                RadarMarker(marker: m, color: color, markerSize: markerSize, scannerSpeed: scannerSpeed, rotation: $rotation)
             }
 
             // Scanner tail
@@ -99,8 +99,11 @@ struct RadarMarker: View {
     let color: Color
     let markerSize: CGFloat
     let scannerSpeed: Double
+    @Binding var rotation: Double
 
-    @State private var opacity: Double = 0
+
+    @State private var opacity: Double = 1.0
+    
 
     var body: some View {
         Circle()
@@ -108,17 +111,24 @@ struct RadarMarker: View {
             .foregroundColor(color)
             .opacity(opacity)
             .onAppear {
-                // Calculate delay based on marker position relative to scanner start
-                let normalizedDegrees = (marker.degrees + 45).truncatingRemainder(dividingBy: 360)
-                let delay = scannerSpeed * (normalizedDegrees / 360)
+                // Compute the time until the scan arm makes contact with mark
+                var angularDifference: Double = rotation - marker.degrees
+                if angularDifference > 180.0 {
+                    angularDifference -= 180.0
+                } else if angularDifference < -180.0 {
+                    angularDifference += 360.0
+                }
+                
+                let delayTime = (scannerSpeed / 360.0) * (angularDifference + 90)
                 
                 withAnimation(
                     Animation
-                        .linear(duration: scannerSpeed / 2)
-                        .delay(delay)
+                        .linear(duration: scannerSpeed)
                         .repeatForever(autoreverses: false)
+                        .delay(delayTime)
+
                 ) {
-                    opacity = 0.8
+                    opacity = 0.0
                 }
             }
             .frame(width: self.markerSize, height: self.markerSize)
