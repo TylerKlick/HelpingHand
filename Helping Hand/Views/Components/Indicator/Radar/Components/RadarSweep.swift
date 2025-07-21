@@ -1,27 +1,40 @@
+//
+//  StatusIndicator.swift
+//  Helping Hand
+//
+//  Created by Tyler Klick on 7/21/25.
+//
+
 import SwiftUI
 
+/// View of Radar scanning arm with Animatable implementation to support live rotation angle binding.
+///  Alternativley, a timer couild be used to approximate the angle based on the rotationTime in RadarScanner: (currentTime / totalRotationtime) * 360
 struct RadarSweep: View, Animatable {
+    
+    // MARK: - UI Elements
     let color: Color
     let width: CGFloat
     let height: CGFloat
     let scannerSize: CGFloat
-    
-    // Tell SwiftUI to update rotation for every degree to alert onChange
-    var rotation: CGFloat
-    var animatableData: CGFloat {
-        get { rotation }
-        set { rotation = newValue }
-    }
-
-    @Binding var liveRotation: Double
-
     private var scannerTailColor: AngularGradient {
         AngularGradient(
             gradient: Gradient(colors: [color.opacity(0), color.opacity(1)]),
             center: .center
         )
     }
+    
+    // MARK: - Animation parameter elements
+    // Tell SwiftUI to update rotation for every degree to alert onChange
+    var rotation: CGFloat
+    var animatableData: CGFloat {
+        get { rotation }
+        set { rotation = newValue }
+    }
+    
+    // Pass the current rotation value to the parent view
+    @Binding var liveRotation: Double
 
+    // MARK: - View Construction
     var body: some View {
         ZStack {
             Circle()
@@ -39,7 +52,7 @@ struct RadarSweep: View, Animatable {
         }
         .frame(width: width, height: height)
         .onChange(of: rotation) { _, newValue in
-            liveRotation = Double(newValue)
+            liveRotation = Double(newValue) // Assign updated value to Binder var to share status
         }
     }
 }
