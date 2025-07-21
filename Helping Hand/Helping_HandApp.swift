@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct Helping_HandApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(BluetoothManagerSingleton.shared)
         }
     }
 }

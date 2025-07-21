@@ -1,0 +1,33 @@
+{
+  "originHash" : "26431405e097bc4adc3bc80e74c951ec8621b94e32aad714767093b8bc094768",
+  "pins" : [
+    {
+      "identity" : "confettiswiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
+      "state" : {
+        "revision" : "79666d42b882bf7921b1941fa7c636d681d77980",
+        "version" : "2.0.3"
+      }
+    },
+    {
+      "identity" : "fluidgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Cindori/FluidGradient.git",
+      "state" : {
+        "revision" : "9ddda4cf23671ef0228e88681ec6210cb3e0d7f7",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swiftui-visual-effects",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lucasbrown/swiftui-visual-effects.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "b26f8cebd55ff60ed8953768aa818dfb005b5838"
+      }
+    }
+  ],
+  "version" : 3
+}
