@@ -9,6 +9,23 @@ import SwiftUI
 internal import FluidGradient
 internal import SwiftUIVisualEffects
 
+struct MeshGradientBackground: View {
+    var body: some View {
+        MeshGradient(
+            width: 2, height: 2,
+            points: [
+                [0, 0], [1, 0],
+                [0, 1], [1, 1]
+            ],
+            colors: [
+                .indigo, .cyan,
+                .purple, .pink
+            ]
+        )
+        .ignoresSafeArea()
+    }
+}
+
 struct ContentView: View {
     
     var body: some View {
