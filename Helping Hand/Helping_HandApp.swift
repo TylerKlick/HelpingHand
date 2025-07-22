@@ -13,7 +13,7 @@ struct Helping_HandApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(BluetoothManagerSingleton.shared)
+//                .environmentObject(BluetoothManagerSingleton.shared)
         }
     }
 }

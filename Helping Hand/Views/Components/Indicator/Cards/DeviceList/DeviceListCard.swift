@@ -16,7 +16,6 @@ struct DeviceListCard: View {
     let isScanning: Bool?
     let onDeviceSelect: ((Device) -> Void)?
     let connectionAction: (Device) -> Void
-    @EnvironmentObject var bluetoothManager: BluetoothManager
     
     init(
         title: String,

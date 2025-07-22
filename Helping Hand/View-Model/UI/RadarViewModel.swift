@@ -5,7 +5,7 @@
 //  Created by Tyler Klick on 7/21/25.
 //
 
-import SwiftUI
+import Foundation
 
 extension RadarScanner {
     
@@ -15,7 +15,6 @@ extension RadarScanner {
         private(set) var blips = [RadarBlip]()
         var rotation: CGFloat = 0
         var currentRotation: Double = 0
-
         
         func addRandomBlip(blipSize: CGFloat, scannerSize: CGFloat, scannerSpeed: CGFloat) {
             let newBlip = RadarBlip(

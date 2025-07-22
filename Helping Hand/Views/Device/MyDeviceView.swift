@@ -10,11 +10,12 @@ import CoreBluetooth
 internal import SwiftUIVisualEffects
 
 // MARK: - Main Bluetooth View
-struct BluetoothView: View {
+struct MyDeviceView: View {
     
-    @EnvironmentObject private var bluetoothManager: BluetoothManager
+    @State private var viewModel = ViewModel()
     @State private var selectedDevice: Device?
-    @State private var showingDeviceDetail = false
+    @State var showingDeviceDetail: Bool = false
+
     
     var body: some View {
         ZStack {
@@ -27,69 +28,44 @@ struct BluetoothView: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         HeroStatusCard(
-                            bluetoothState: bluetoothManager.bluetoothState,
-                            connectedCount: connectedDevicesCount
-                        )
-                        QuickActionsCard(
-                            hasConnectedDevices: connectedDevicesCount > 0,
-                            onScanToggle: { bluetoothManager.loadPairedDevices()},
-                            onDisconnectAll: { bluetoothManager.disconnectAll() },
-                            onPair: { bluetoothManager.loadPairedDevices()},
-                            onConnectAll: { connectAllDevices() },
-                            onUpdateAll: { /* TODO: Implement update all */ },
-                            connectAllEnabled: pairedDevices.count > 0 && bluetoothManager.bluetoothState == .poweredOn,
-                            disconnectAllEnabled: connectedDevices.count > 0 && bluetoothManager.bluetoothState == .poweredOn,
-                            pairEnabled: bluetoothManager.bluetoothState == .poweredOn,
-                            updateAllEnabled: connectedDevices.count > 0 && bluetoothManager.bluetoothState == .poweredOn
+                            bluetoothState: viewModel.bluetoothState,
+                            connectedCount: viewModel.connectedDevicesCount
                         )
                         
+                        QuickActionsCard(
+                            hasConnectedDevices: viewModel.hasConnectedDevices,
+                            onScanToggle: { viewModel.loadPairedDevices() },
+                            onDisconnectAll: { viewModel.disconnectAll() },
+                            onPair: { viewModel.loadPairedDevices()},
+                            onConnectAll: { viewModel.connectAllDevices() },
+                            onUpdateAll: { /* TODO: Implement update all */ },
+                            connectAllEnabled: viewModel.hasPairedAndPowered,
+                            disconnectAllEnabled: viewModel.isConnectedAndPowered,
+                            pairEnabled: viewModel.bluetoothState == .poweredOn,
+                            updateAllEnabled: viewModel.isConnectedAndPowered
+                        )
                         
                         DeviceListCard(
                             title: "Paired Devices",
-                            devices: pairedDevices,
+                            devices: viewModel.pairedDevices,
                             emptyMessage: "No Paired Devices",
                             emptySubtitle: "Previously connected devices will appear here",
                             showCount: false,
-                            isScanning: bluetoothManager.isScanning,
+                            isScanning: viewModel.isScanning,
                             onDeviceSelect: { device in
-                                selectedDevice = device
-                                showingDeviceDetail = true
+                                self.selectedDevice = device
+                                self.showingDeviceDetail = true
                             },
                             connectionAction: { device in
-                                bluetoothManager.connect(to: device)
+                                viewModel.connect(to: device)
                             }
-                    )
+                        )
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                 }
             }
         }
-    }
-    
-    // MARK: - Helper Functions
-    private func toggleScanning() {
-        bluetoothManager.isScanning ? bluetoothManager.stopScanning() : bluetoothManager.startScanning()
-    }
-    
-    private func connectAllDevices() {
-        for device in pairedDevices {
-            if device.connectionState == .disconnected {
-                bluetoothManager.connect(to: device)
-            }
-        }
-    }
-    
-    private var connectedDevices: [Device] {
-        return pairedDevices.filter { $0.connectionState == .connected }
-    }
-    
-    private var pairedDevices: [Device] {
-        return bluetoothManager.pairedDevices
-    }
-    
-    private var connectedDevicesCount: Int {
-        connectedDevices.count
     }
 }
 

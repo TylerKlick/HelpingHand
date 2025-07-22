@@ -9,7 +9,6 @@ import SwiftUI
 
 struct DeviceList: View {
     
-    @EnvironmentObject private var bluetoothManager: BluetoothManager
     let isPairedList: Bool
     let onDeviceSelect: ((Device) -> Void)?
     let connectionAction: (Device) -> Void

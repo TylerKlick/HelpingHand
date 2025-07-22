@@ -51,7 +51,7 @@ struct ContentView: View {
                 MeshGradientBackground()
                     .ignoresSafeArea()
                     .overlay(
-                        BluetoothView()
+                        MyDeviceView()
                     )
             }
 //            }, CustomTabItem(

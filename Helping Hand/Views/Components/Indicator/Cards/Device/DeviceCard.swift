@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeviceCard: View {
+    
     @ObservedObject var device: Device
     let isPaired: Bool
     let onConnectionAction: () -> Void

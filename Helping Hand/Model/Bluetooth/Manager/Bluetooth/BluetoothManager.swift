@@ -13,16 +13,17 @@ class BluetoothManagerSingleton {
 }
 
 // MARK: - Bluetooth Manager
+@Observable
 class BluetoothManager: NSObject, ObservableObject {
     
     // MARK: - Properties
     private var pairingManager = DevicePairingManager()
     private var centralManager: CBCentralManager!
     
-    @Published var bluetoothState: BluetoothManagerState = .unknown
-    @Published var pairedDevices: [Device] = []
-    @Published var peripheralInfo: [UUID: Device] = [:]
-    @Published var isScanning = false
+    var bluetoothState: BluetoothManagerState = .unknown
+    var pairedDevices: [Device] = []
+    var peripheralInfo: [UUID: Device] = [:]
+    var isScanning = false
     
     var receivedData: [String] = []
     
