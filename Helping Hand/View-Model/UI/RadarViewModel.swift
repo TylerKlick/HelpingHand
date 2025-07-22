@@ -10,16 +10,21 @@ import SwiftUI
 extension RadarScanner {
     
     @Observable
-    class ViewModel {
+    internal class ViewModel {
         
-        /// RadarBlips to be displayed
         private(set) var blips = [RadarBlip]()
+        var rotation: CGFloat = 0
+        var currentRotation: Double = 0
+
         
-        func addRandomBlip(blipSize: CGFloat, scannerSize: CGFloat) {
-            let randomRadialOffet = CGFloat(Int.random(in: Int(blipSize)...Int((scannerSize / 2) - blipSize)))
-            let randomAngularOffset = Double(Int.random(in: 0...360))
-            
-            blips.append(RadarBlip(radialOffset: randomRadialOffet, angularOffset: randomAngularOffset))
+        func addRandomBlip(blipSize: CGFloat, scannerSize: CGFloat, scannerSpeed: CGFloat) {
+            let newBlip = RadarBlip(
+                currentRotation: currentRotation,
+                blipSize: blipSize,
+                scannerSize: scannerSize,
+                scannerSpeed: scannerSpeed
+            )
+            self.blips.append(newBlip)
         }
         
         func removeBlip() {

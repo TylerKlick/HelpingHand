@@ -13,8 +13,6 @@ struct RadarSweep: View, Animatable {
     
     // MARK: - UI Elements
     let color: Color
-    let width: CGFloat
-    let height: CGFloat
     let scannerSize: CGFloat
     private var scannerTailColor: AngularGradient {
         AngularGradient(
@@ -50,7 +48,6 @@ struct RadarSweep: View, Animatable {
                 .rotationEffect(.degrees(rotation))
                 .foregroundColor(color)
         }
-        .frame(width: width, height: height)
         .onChange(of: rotation) { _, newValue in
             liveRotation = Double(newValue) // Assign updated value to Binder var to share status
         }
@@ -58,7 +55,7 @@ struct RadarSweep: View, Animatable {
 }
 
 // MARK: - Demo Preview
-struct RadarDemo: View {
+private struct RadarDemo: View {
     @State private var rotation: CGFloat = 0
     @State private var model: Double = 0
 
@@ -66,8 +63,6 @@ struct RadarDemo: View {
         VStack(spacing: 40) {
             RadarSweep(
                 color: .green,
-                width: 300,
-                height: 300,
                 scannerSize: 250,
                 rotation: rotation,
                 liveRotation: $model
