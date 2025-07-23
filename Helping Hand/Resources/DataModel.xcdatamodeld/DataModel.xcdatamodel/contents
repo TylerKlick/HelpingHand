@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier=""/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="DataFrame" representedClassName="DataFrame" syncable="YES" codeGenerationType="class">
+        <attribute name="eSMGData" attributeType="Binary"/>
+        <attribute name="frameIndex" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imuData" optional="YES" attributeType="Binary"/>
+        <attribute name="timeStamp" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="session" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Session" inverseName="frames" inverseEntity="Session"/>
+    </entity>
+    <entity name="Session" representedClassName="Session" syncable="YES" codeGenerationType="class">
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="mode" attributeType="String"/>
+        <attribute name="sessionID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="frames" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataFrame" inverseName="session" inverseEntity="DataFrame"/>
+        <relationship name="sessionSettings" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SessionSettings"/>
+    </entity>
+    <entity name="SessionSettings" representedClassName="SessionSettings" syncable="YES" codeGenerationType="class">
+        <attribute name="channelMap" optional="YES" attributeType="Transformable"/>
+        <attribute name="eSMGSampleRate" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imuSampleRate" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="overlapRatio" attributeType="Float" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="windowSize" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="windowType" attributeType="String"/>
+    </entity>
+</model>

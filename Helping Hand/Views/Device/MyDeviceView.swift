@@ -60,6 +60,11 @@ struct MyDeviceView: View {
                                 viewModel.getConnectionAction(for: device)()
                             }
                         )
+                        
+                        DataStreamCard(
+                            data: viewModel.receivedData,
+                            onClear: { }
+                        )
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)

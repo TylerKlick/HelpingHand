@@ -64,7 +64,11 @@ extension MyDeviceView {
         }
         
         var hasActiveAndPowered: Bool {
-            pairedDevices.filter{ $0.connectionState != .disconnected && $0.connectionState != .validationFailed }.count > 0 && bluetoothState == .poweredOn
+            pairedDevices.filter{ $0.connectionState != .disconnected }.count > 0 && bluetoothState == .poweredOn
+        }
+        
+        var receivedData: [String] {
+            bluetoothManager.receivedData
         }
         
         // MARK: - Actions

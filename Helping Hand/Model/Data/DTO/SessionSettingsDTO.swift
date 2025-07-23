@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct SessionSettingsDTO {
+    let eSMGSampleRate: Double
+    let imuSampleRate:  Double
+    let windowSize:     Int
+    let windowType:     String
+    let overlapRatio:   Float
+    let channelMap:     [Int]
+}
