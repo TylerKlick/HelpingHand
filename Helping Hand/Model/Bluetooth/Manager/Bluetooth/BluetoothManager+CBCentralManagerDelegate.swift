@@ -22,6 +22,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
+        
         // Pre-filter: skip devices that don't advertise any services
         guard advertisementData[CBAdvertisementDataServiceUUIDsKey] != nil else { return }
         

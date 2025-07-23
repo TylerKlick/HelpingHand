@@ -8,13 +8,12 @@
 import CoreBluetooth
 import os
 
-class BluetoothManagerSingleton {
-    static let shared = BluetoothManager()
-}
-
 // MARK: - Bluetooth Manager
 @Observable
-class BluetoothManager: NSObject, ObservableObject {
+internal class BluetoothManager: NSObject, ObservableObject {
+    
+    /// Singleton instance to be shared among all utilizing views and classes
+    static let singleton = BluetoothManager()
     
     // MARK: - Properties
     private var pairingManager = DevicePairingManager()
@@ -27,7 +26,7 @@ class BluetoothManager: NSObject, ObservableObject {
     
     var receivedData: [String] = []
     
-    override init() {
+    private override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
         isScanning = centralManager.isScanning
@@ -90,7 +89,6 @@ class BluetoothManager: NSObject, ObservableObject {
         peripheralInfo[identifier] = peripheralInfo[identifier] ?? Device(peripheral)
         
         updateConnectionState(for: peripheral, state: .connecting)
-        updateDeviceConnectionState(for: identifier, state: .validating)
         
         startValidationTimer(for: peripheral)
         
@@ -107,13 +105,13 @@ class BluetoothManager: NSObject, ObservableObject {
     
     func disconnect(_ peripheral: CBPeripheral) {
         guard let info = peripheralInfo[peripheral.identifier],
-              info.connectionState == .connected || info.connectionState == .validating else { return }
+              info.connectionState != .disconnected else { return }
         
+        os_log("Disconnecting from %@", peripheral)
         updateConnectionState(for: peripheral, state: .disconnecting)
         unsubscribeFromNotifications(peripheral)
         centralManager.cancelPeripheralConnection(peripheral)
-        
-        os_log("Disconnecting from %@", peripheral)
+        updateConnectionState(for: peripheral, state: .disconnected)
     }
     
     func disconnectAll() {

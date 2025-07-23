@@ -40,7 +40,7 @@ struct MyDeviceView: View {
                             onConnectAll: { viewModel.connectAllDevices() },
                             onUpdateAll: { /* TODO: Implement update all */ },
                             connectAllEnabled: viewModel.hasPairedAndPowered,
-                            disconnectAllEnabled: viewModel.isConnectedAndPowered,
+                            disconnectAllEnabled: viewModel.hasActiveAndPowered,
                             pairEnabled: viewModel.bluetoothState == .poweredOn,
                             updateAllEnabled: viewModel.isConnectedAndPowered
                         )
@@ -57,7 +57,7 @@ struct MyDeviceView: View {
                                 self.showingDeviceDetail = true
                             },
                             connectionAction: { device in
-                                viewModel.connect(to: device)
+                                viewModel.getConnectionAction(for: device)()
                             }
                         )
                     }
