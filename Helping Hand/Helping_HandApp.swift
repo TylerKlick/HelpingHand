@@ -13,7 +13,9 @@ struct Helping_HandApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(BluetoothManagerSingleton.shared)
+                .modelContainer(for: [Session.self, DataFrame.self, SessionSettings.self])
+
+//                .environmentObject(BluetoothManagerSingleton.shared)
         }
     }
 }
