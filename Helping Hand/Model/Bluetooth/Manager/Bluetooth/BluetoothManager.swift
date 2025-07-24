@@ -188,8 +188,8 @@ internal class BluetoothManager: NSObject, ObservableObject {
         if isValid {
             updateConnectionState(for: peripheral, state: .connected)
         } else {
-            updateConnectionState(for: peripheral, state: .validationFailed)
             disconnect(peripheral)
+            updateConnectionState(for: peripheral, state: .validationFailed)
         }
     }
     
