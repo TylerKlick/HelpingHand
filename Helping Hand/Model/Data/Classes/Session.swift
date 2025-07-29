@@ -10,16 +10,16 @@ import Foundation
 import SwiftData
 
 @Model public class Session {
-    var endTime_: Date
-    var sessionID_: UUID
-    var startTime_: Date
+    @Attribute(.unique) var sessionID: UUID
+    var startTime: Date
+    var endTime: Date
     @Relationship(deleteRule: .cascade) var frames: [DataFrame]?
-    @Relationship(deleteRule: .cascade) var settings: SessionSettings?
+    var settings: SessionSettings?
     
-    public init(endTime_: Date, mode_: String, sessionID_: UUID, startTime_: Date) {
-        self.endTime_ = endTime_
-        self.sessionID_ = sessionID_
-        self.startTime_ = startTime_
+    public init(endTime: Date, mode: String, sessionID: UUID, startTime: Date) {
+        self.endTime = endTime
+        self.sessionID = sessionID
+        self.startTime = startTime
     }
     
 }
