@@ -43,3 +43,4 @@ jobs:
         show-passed-tests: true
         show-code-coverage: true
         upload-bundles: always
+      if: success() || failure()
