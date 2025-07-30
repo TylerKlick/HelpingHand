@@ -2,5 +2,3 @@ sEMG + IMU gesture recognition system utilizing Swift ML for deployment on mobil
 
 
 Documentation: https://tylerklick.github.io/HelpingHand/
-
-test
