@@ -21,5 +21,4 @@ import SwiftData
         self.sessionID = sessionID
         self.startTime = startTime
     }
-    
 }

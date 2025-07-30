@@ -14,9 +14,9 @@ import SwiftData
     var imuData: Data
     var sEMGData: Data
     var timeStamp: Date
-    var mode: Mode
+    var mode: Mode = Mode.inference
     var label: String
-    var session: Session?
+    @Relationship(inverse: \Session.frames) var session: Session?
     
     public init(label: String, mode: Mode, frameID: UUID, imuData: Data, sEMGData: Data, timeStamp: Date) {
         self.frameID = frameID
