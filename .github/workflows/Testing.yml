@@ -9,6 +9,7 @@ on:
       - '**'
 
 permissions:
+  checks: write
   contents: read
 
 jobs:
@@ -31,7 +32,14 @@ jobs:
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
-          -enableCodeCoverage YES \
-          -allowProvisioningUpdates \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          -resultBundlePath TestResults
+    
+    - name: xcresulttool (replace with oiffical version when xcode 16 support is merged)
+      uses: slidoapp/xcresulttool@v3.1.0
+      with:
+        path: TestResults.xcresult
+        token: ${{ github.token }}
+        title: Xcode test results
+        show-passed-tests: true
+        show-code-coverage: true
+        upload-bundles: always
