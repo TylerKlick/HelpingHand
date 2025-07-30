@@ -9,6 +9,7 @@ on:
       - '**'
 
 permissions:
+  checks: write
   contents: read
 
 jobs:
@@ -33,8 +34,12 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults
     
-    - name: xcresulttool
+    - name: xcresulttool (replace with oiffical version when xcode 16 support is merged)
       uses: slidoapp/xcresulttool@v3.1.0
       with:
         path: TestResults.xcresult
-      if: success() || failure()
+        token: ${{ github.token }}
+        title: Xcode test results
+        show-passed-tests: true
+        show-code-coverage: true
+        upload-bundles: always
