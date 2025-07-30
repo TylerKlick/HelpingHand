@@ -147,7 +147,7 @@ struct SessionSettingsFingerprintTests {
             windowSize:     64,
             windowType:     .hamming
         )
-        #expect(base.fingerprint == other.fingerprint)
+        #expect(base.fingerprint != other.fingerprint)
     }
 
     @Test("Fingerprint changes when channelMap value changes")
