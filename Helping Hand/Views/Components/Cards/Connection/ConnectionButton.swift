@@ -1,0 +1,65 @@
+//
+//  ConnectionComponents.swift
+//  Helping Hand
+//
+//  Created by Tyler Klick on 7/13/25.
+//
+
+import SwiftUI
+internal import SwiftUIVisualEffects
+
+// MARK: - Connection State Typealias
+
+
+// MARK: - Connection Button
+struct ConnectionButton: View {
+    let state: DeviceConnectionState
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(buttonText)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(buttonTextColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    BlurEffect()
+                        .blurEffectStyle(blurEffectStyle)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
+    }
+    
+    private var buttonText: String {
+        switch state {
+        case .disconnected: return "Connect"
+        case .connecting, .validating, .validated, .disconnecting: return "Cancel"
+        case .connected: return "Disconnect"
+        case .validationFailed: return "Retry"
+        }
+    }
+    
+    private var buttonTextColor: Color {
+        switch state {
+        case .disconnected, .validationFailed: return .white
+        case .connecting, .validating, .validated, .disconnecting: return .orange
+        case .connected: return .white
+        }
+    }
+    
+    private var blurEffectStyle: UIBlurEffect.Style {
+        switch state {
+        case .disconnected, .validationFailed: return .systemMaterialDark
+        case .connecting, .validating, .validated, .disconnecting: return .systemUltraThinMaterial
+        case .connected: return .systemMaterialDark
+        }
+    }
+}
+
+#Preview {
+    ConnectionButton(state: .connected, action: {})
+}

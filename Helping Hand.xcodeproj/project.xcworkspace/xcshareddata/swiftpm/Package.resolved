@@ -1,5 +1,5 @@
 {
-  "originHash" : "7122e06f82347d1c86b77412da67b81d0d19730e7148704122a8d5ac80cc4ffd",
+  "originHash" : "26431405e097bc4adc3bc80e74c951ec8621b94e32aad714767093b8bc094768",
   "pins" : [
     {
       "identity" : "confettiswiftui",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "9ddda4cf23671ef0228e88681ec6210cb3e0d7f7",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swiftui-visual-effects",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lucasbrown/swiftui-visual-effects.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "b26f8cebd55ff60ed8953768aa818dfb005b5838"
       }
     }
   ],

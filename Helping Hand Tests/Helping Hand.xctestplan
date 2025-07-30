@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "E33C1D2F-E34C-4D6B-BBD6-689910648C7C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Helping Hand.xcodeproj",
+      "identifier" : "FA7AB61B2DFB3F9C0097E164",
+      "name" : "Helping Hand"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Helping Hand.xcodeproj",
+        "identifier" : "FABB90832E392BA1009A2513",
+        "name" : "Helping Hand Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
