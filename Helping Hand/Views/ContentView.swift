@@ -9,11 +9,28 @@ import SwiftUI
 internal import FluidGradient
 internal import SwiftUIVisualEffects
 
+struct MeshGradientBackground: View {
+    var body: some View {
+        MeshGradient(
+            width: 2, height: 2,
+            points: [
+                [0, 0], [1, 0],
+                [0, 1], [1, 1]
+            ],
+            colors: [
+                .indigo, .cyan,
+                .purple, .pink
+            ]
+        )
+        .ignoresSafeArea()
+    }
+}
+
 struct ContentView: View {
     
     var body: some View {
         
-        
+//        
 //        FluidGradient(
 //            blobs: [.purple, .cyan, .indigo],
 //            highlights: [.green.opacity(0.8)],
@@ -23,7 +40,7 @@ struct ContentView: View {
 //        .ignoresSafeArea()
 //        .overlay(
 //         )
-        
+//        
         let tabItems = [
             CustomTabItem(
                 systemImageName: "house",
@@ -34,68 +51,16 @@ struct ContentView: View {
                 MeshGradientBackground()
                     .ignoresSafeArea()
                     .overlay(
-                        BluetoothView()
+                        MyDeviceView()
                     )
             }
-//            }, CustomTabItem(
-//                systemImageName: "house",
-//                title: "Home",
-//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-//            ) {
-//                
-//                FluidGradient(
-//                    blobs: [.purple, .cyan, .indigo],
-//                    highlights: [.green.opacity(0.8)],
-//                    speed: 0.1,
-//                    blur: 0.9
-//                )
-//                .ignoresSafeArea()
-//                .overlay(
-//                    BluetoothView()
-//                )
-//            },
-//            CustomTabItem(
-//                systemImageName: "house",
-//                title: "Home",
-//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-//            ) {
-//                
-//                FluidGradient(
-//                    blobs: [.purple, .cyan, .indigo],
-//                    highlights: [.green.opacity(0.8)],
-//                    speed: 0.1,
-//                    blur: 0.9
-//                )
-//                .ignoresSafeArea()
-//                .overlay(
-//                    BluetoothView()
-//                )
-//            },
-//            CustomTabItem(
-//                systemImageName: "house",
-//                title: "Home",
-//                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
-//            ) {
-//                
-//                FluidGradient(
-//                    blobs: [.purple, .cyan, .indigo],
-//                    highlights: [.green.opacity(0.8)],
-//                    speed: 0.1,
-//                    blur: 0.9
-//                )
-//                .ignoresSafeArea()
-//                .overlay(
-//                    BluetoothView()
-//                )
-//            }
+
         ]
         
         CustomTabView(items: tabItems)
-            
     }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(BluetoothManagerSingleton.shared)
 }

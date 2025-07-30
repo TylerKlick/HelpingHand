@@ -1,79 +1,153 @@
 import CoreBluetooth
 import os
 
-// MARK: - CBCentralManagerDelegate
-extension BluetoothManager: CBCentralManagerDelegate {
+// MARK: - CBPeripheralDelegate
+extension BluetoothManager: CBPeripheralDelegate {
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        switch(central.state) {
-            case .poweredOn:
-                bluetoothState = .poweredOn
-            case .poweredOff:
-                bluetoothState = .poweredOff
-            case .unauthorized:
-                bluetoothState = .unauthorized
-            case .resetting:
-                bluetoothState = .resetting
-            case .unsupported:
-                bluetoothState = .unsupported
-            default:
-                bluetoothState = .unknown
+    func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+        for service in invalidatedServices where CBUUIDs.serviceUUIDs.contains(service.uuid) {
+            os_log("Service invalidated - rediscovering services")
+            peripheral.discoverServices(CBUUIDs.serviceUUIDs)
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        // Pre-filter: skip devices that don't advertise any services
-        guard advertisementData[CBAdvertisementDataServiceUUIDsKey] != nil else { return }
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        if let error = error {
+            handleServiceDiscoveryError(for: peripheral, error: error)
+            return
+        }
         
-        os_log("Discovered peripheral: %@", peripheral)
-        addDiscoveredPeripheral(peripheral)
+        guard let services = peripheral.services, !services.isEmpty else {
+            handleServiceDiscoveryError(for: peripheral, error: nil)
+            return
+        }
+        
+        os_log("Discovered services, finding characteristics")
+        
+        for service in services {
+            peripheral.discoverCharacteristics(CBUUIDs.characteristicUUIDs(for: service.uuid), for: service)
+        }
     }
     
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        handleConnectionError(for: peripheral, error: error)
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        if let error = error {
+            handleServiceDiscoveryError(for: peripheral, error: error)
+            return
+        }
+        
+        guard service.characteristics != nil else {
+            handleServiceDiscoveryError(for: peripheral, error: nil)
+            return
+        }
+        
+        // Check if we've discovered all characteristics for all services
+        if hasDiscoveredAllCharacteristics(for: peripheral) {
+            let isValid = validateServicesAndCharacteristics(for: peripheral)
+            handleValidationResult(for: peripheral, isValid: isValid)
+            
+            if isValid {
+                os_log("Peripheral validation successful - setting up characteristics")
+                setupCharacteristics(for: peripheral)
+            }
+        }
     }
     
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        os_log("Connected to peripheral: %@", peripheral)
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            os_log("Error updating characteristic value: %@", error.localizedDescription)
+            return
+        }
         
-        updateConnectionState(for: peripheral, state: .validating)
+        guard let data = characteristic.value, !data.isEmpty else {
+            os_log("No data received for characteristic %@", characteristic.uuid.uuidString)
+            return
+        }
         
-        peripheral.delegate = self
-        peripheral.discoverServices(CBUUIDs.serviceUUIDs)
+        processReceivedData(data, from: characteristic)
     }
     
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        os_log("Disconnected from peripheral: %@", peripheral)
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            os_log("Error changing notification state: %@", error.localizedDescription)
+            return
+        }
         
-        handleDisconnection(for: peripheral, error: error)
+        if characteristic.isNotifying {
+            os_log("Notification began on %@", characteristic.uuid.uuidString)
+        } else {
+            os_log("Notification stopped on %@", characteristic.uuid.uuidString)
+        }
+    }
+    
+    func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
+        os_log("Peripheral ready to send data")
     }
     
     // MARK: - Helper Methods
-    private func handleConnectionError(for peripheral: CBPeripheral, error: Error?) {
-                
+    private func handleServiceDiscoveryError(for peripheral: CBPeripheral, error: Error?) {
         if let error = error {
-            os_log("Connection error for %@: %@", peripheral, error.localizedDescription)
+            os_log("Service discovery error: %@", error.localizedDescription)
         }
         
-        updateConnectionState(for: peripheral, state: .disconnected)
-        handleValidationResult(for: peripheral, isValid: false, reason: "connection failed")
+        handleValidationResult(for: peripheral, isValid: false, reason: "service discovery failed")
     }
     
-    private func handleDisconnection(for peripheral: CBPeripheral, error: Error?) {
+    private func hasDiscoveredAllCharacteristics(for peripheral: CBPeripheral) -> Bool {
+        return peripheral.services?.allSatisfy { service in
+            service.characteristics != nil
+        } ?? false
+    }
+    
+    private func validateServicesAndCharacteristics(for peripheral: CBPeripheral) -> Bool {
+        guard let services = peripheral.services else { return false }
         
-        let peripheralIdentifier = peripheral.identifier
-
-        peripheralInfo[peripheralIdentifier]?.validationTimer?.invalidate()
-        updateConnectionState(for: peripheral, state: .disconnected)
+        let expectedServices = CBUUIDs.serviceUUIDs
+        let foundServices = services.map { $0.uuid }
         
-        if let error = error {
-            os_log("Disconnection error for %@: %@", peripheral, error.localizedDescription)
+        // Check all required services are present
+        guard expectedServices.allSatisfy({ foundServices.contains($0) }) else {
+            os_log("Missing required services")
+            return false
         }
         
-        // If peripheral was validating and disconnected unexpectedly, mark as invalid
-        if let info = peripheralInfo[peripheralIdentifier],
-           info.connectionState == .validating {
-            handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
+        // Check all required characteristics are present
+        for service in services {
+            guard let characteristics = service.characteristics else { return false }
+            
+            let expectedCharacteristics = CBUUIDs.characteristicUUIDs(for: service.uuid)
+            let foundCharacteristics = characteristics.map { $0.uuid }
+            
+            guard expectedCharacteristics.allSatisfy({ foundCharacteristics.contains($0) }) else {
+                os_log("Missing required characteristics for service %@", service.uuid.uuidString)
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    private func setupCharacteristics(for peripheral: CBPeripheral) {
+        guard let services = peripheral.services else { return }
+        
+        for service in services {
+            guard let characteristics = service.characteristics else { continue }
+            
+            for characteristic in characteristics {
+                guard let spec = CBUUIDs.characteristicSpec(for: characteristic.uuid) else { continue }
+                
+                for property in spec.properties {
+                    switch property {
+                    case .notify:
+                        peripheral.setNotifyValue(true, for: characteristic)
+                        os_log("Subscribed to notifications for %@", characteristic.uuid.uuidString)
+                    case .read:
+                        peripheral.readValue(for: characteristic)
+                        os_log("Reading value for %@", characteristic.uuid.uuidString)
+                    case .write:
+                        os_log("Found writable characteristic %@", characteristic.uuid.uuidString)
+                    }
+                }
+            }
         }
     }
 }

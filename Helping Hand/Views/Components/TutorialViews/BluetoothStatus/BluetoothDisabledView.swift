@@ -165,6 +165,5 @@ struct TutorialStep: View {
 }
 
 #Preview {
-//    TutorialStep(stepNumber: 2, icon: "", title: "Open settings", description: "")
     BluetoothSettingsGuideView()
 }
