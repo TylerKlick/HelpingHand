@@ -33,8 +33,8 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults
     
-    - name: Publish Test Results
-      uses: kishikawakatsumi/xcresulttool@v1
+    - name: xcresulttool
+      uses: kishikawakatsumi/xcresulttool@v1.7.1
       with:
         path: TestResults.xcresult
       if: success() || failure()
