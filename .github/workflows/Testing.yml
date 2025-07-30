@@ -34,7 +34,7 @@ jobs:
           -resultBundlePath TestResults
     
     - name: xcresulttool
-      uses: kishikawakatsumi/xcresulttool@v1.7.1
+      uses: slidoapp/xcresulttool@v3.1.0
       with:
         path: TestResults.xcresult
       if: success() || failure()
