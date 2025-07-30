@@ -17,10 +17,10 @@ jobs:
     
     steps:
 
-    # - name: Select Xcode 16
-    #   uses: maxim-lobanov/setup-xcode@v1
-    #   with:
-    #     xcode-version: '16.*'
+    - name: Select Xcode 16
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.*'
         
     - name: Checkout repository
       uses: actions/checkout@v4
