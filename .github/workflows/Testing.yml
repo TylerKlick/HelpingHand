@@ -31,10 +31,6 @@ jobs:
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
-          -enableCodeCoverage YES \
-          -allowProvisioningUpdates \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO \
           -resultBundlePath TestResults
     
     - name: Publish Test Results
