@@ -27,11 +27,18 @@ jobs:
 
     - name: Run Tests on iPhone 16 Simulator
       run: |
-        xcodebuild test-without-building \
+        xcodebuild test \
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -enableCodeCoverage YES \
           -allowProvisioningUpdates \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          -resultBundlePath TestResults
+    
+    - name: Publish Test Results
+      uses: kishikawakatsumi/xcresulttool@v1
+      with:
+        path: TestResults.xcresult
+      if: success() || failure()
