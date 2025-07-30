@@ -71,6 +71,6 @@ build/*
 # old skool
 .svn
 
-# osx noise
+# osx noise to remove
 .DS_Store
 profile
