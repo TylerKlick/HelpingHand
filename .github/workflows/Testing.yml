@@ -30,7 +30,7 @@ jobs:
         xcodebuild test \
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
-          -destination /platform=iOS Simulator,name=iPhone 16,OS=18.0' \
+          -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' \
           -enableCodeCoverage YES \
           -allowProvisioningUpdates \
           CODE_SIGNING_REQUIRED=NO \
