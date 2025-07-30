@@ -25,12 +25,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run Tests on iPhone 16 Simulator (iOS 18.0)
+    - name: Run Tests on iPhone 16 Simulator (iOS 18.*)
       run: |
         xcodebuild test \
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
-          -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' \
+          -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.*' \
           -enableCodeCoverage YES \
           -allowProvisioningUpdates \
           CODE_SIGNING_REQUIRED=NO \
