@@ -29,7 +29,7 @@ jobs:
           xcodebuild test \
             -scheme "Helping Hand" \
             -project "Helping Hand.xcodeproj" \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination 'platform=iOS Simulator,name=iPhone 12' \
             -enableCodeCoverage YES \
             -allowProvisioningUpdates \
             CODE_SIGNING_REQUIRED=NO \
