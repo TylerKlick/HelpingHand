@@ -27,7 +27,7 @@ jobs:
 
     - name: Run Tests on iPhone 16 Simulator
       run: |
-        xcodebuild test \
+        xcodebuild test-without-building \
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
