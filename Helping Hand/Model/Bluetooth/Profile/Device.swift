@@ -5,32 +5,25 @@
 //  Created by Tyler Klick on 7/14/25.
 //
 
+import SwiftData
 import Foundation
 import CoreBluetooth
 
 /// Representation of Bluetooth Peripheral in static storage and at runtime
-class Device: Codable, Identifiable, ObservableObject {
+@Model
+class Device: Identifiable, ObservableObject {
     
     // MARK: - Parameters to save in storage
-    let id: UUID
-    let name: String
-    let identifier: UUID
-    let dateAdded: Date
-    var lastSeen: Date
+    @Attribute(.unique) private(set) var id: UUID
+    @Attribute(.unique) private(set) var identifier: UUID
+    private(set) var name: String
+    private(set) var dateAdded: Date
+    private(set) var lastSeen: Date
     
     // MARK: - Parameters only used at runtime (not saved)
-    @Published var connectionState: DeviceConnectionState = .disconnected
-    var validationTimer: Timer?
-    var responseTimer: Timer?
-    
-    /// Indicate which parameters we want in the Encoded data saved
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case identifier
-        case dateAdded
-        case lastSeen
-    }
+    @Transient @Published var connectionState: DeviceConnectionState = DeviceConnectionState.disconnected
+    @Transient var validationTimer: Timer?
+    @Transient var responseTimer: Timer?
 
     init(name: String? = nil, identifier: UUID) {
         self.id = UUID()
@@ -43,5 +36,9 @@ class Device: Codable, Identifiable, ObservableObject {
     
     convenience init(_ peripheral: CBPeripheral) {
         self.init(name: peripheral.name, identifier: peripheral.identifier)
+    }
+    
+    public func updateLastSeen() -> Void {
+        self.lastSeen = Date()
     }
 }

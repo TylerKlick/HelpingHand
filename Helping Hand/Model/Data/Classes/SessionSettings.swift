@@ -17,7 +17,7 @@ import CryptoKit
     private(set) var fingerprint: String = ""
     
     /// One to many relationship with Sessions -- many sessions can share the same settings, but each may only have one SessionSettings
-    @Relationship(inverse: \Session.settings)
+    @Relationship(deleteRule: .cascade, inverse: \Session.settings)
     private(set) var sessions: [Session] = []
     
     // MARK: - Sampling Settings
@@ -69,5 +69,4 @@ import CryptoKit
            let hash = SHA256.hash(data: Data(combined.utf8))
            return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
-    
 }

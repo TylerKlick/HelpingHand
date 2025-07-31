@@ -16,7 +16,7 @@ internal class BluetoothManager: NSObject, ObservableObject {
     static let singleton = BluetoothManager()
     
     // MARK: - Properties
-    private var pairingManager = DevicePairingManager()
+    private var pairingManager:DevicePairingManager
     private var centralManager: CBCentralManager!
     
     var bluetoothState: BluetoothManagerState = .unknown
