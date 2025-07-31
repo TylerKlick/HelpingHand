@@ -10,21 +10,21 @@ import Foundation
 import SwiftData
 
 @Model public class DataFrame {
-    @Attribute(.unique) var frameID: UUID
-    var imuData: Data
-    var sEMGData: Data
-    var timeStamp: Date
-    var mode: Mode
-    var label: String
-    var session: Session?
+    @Attribute(.unique) private(set) var frameID: UUID
+    @Relationship(inverse: \Session.frames) private(set) var session: Session?
+    private(set) var imuData: Data
+    private(set) var sEMGData: Data
+    private(set) var timeStamp: Date
+    private(set) var mode: Mode = Mode.inference
+    private(set) var label: String
     
-    public init(label: String, mode: Mode, frameID: UUID, imuData: Data, sEMGData: Data, timeStamp: Date) {
-        self.frameID = frameID
+    public init(session: Session, label: String, mode: Mode, imuData: Data, sEMGData: Data, timeStamp: Date) {
+        self.frameID = UUID()
+        self.session = session
         self.imuData = imuData
         self.sEMGData = sEMGData
         self.timeStamp = timeStamp
         self.mode = mode
         self.label = label
     }
-    
 }

@@ -1,0 +1,46 @@
+name: "[Test] Build and Test"
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  checks: write
+  contents: read
+
+jobs:
+  test-ios:
+    runs-on: macos-latest
+    
+    steps:
+
+    - name: Select Xcode 16
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.*'
+        
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run Tests on iPhone 16 Simulator
+      run: |
+        xcodebuild test \
+          -scheme "Helping Hand" \
+          -project "Helping Hand.xcodeproj" \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -resultBundlePath TestResults
+    
+    - name: xcresulttool (replace with oiffical version when xcode 16 support is merged)
+      uses: slidoapp/xcresulttool@v3.1.0
+      with:
+        path: TestResults.xcresult
+        token: ${{ github.token }}
+        title: Xcode test results
+        show-passed-tests: true
+        show-code-coverage: true
+        upload-bundles: always
+      if: success() || failure()
