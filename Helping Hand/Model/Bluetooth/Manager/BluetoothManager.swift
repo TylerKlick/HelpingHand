@@ -5,8 +5,12 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
+<<<<<<< HEAD:Helping Hand/Model/Bluetooth/Manager/BluetoothManager.swift
 import SwiftData
 import CoreBluetooth
+=======
+@preconcurrency import CoreBluetooth
+>>>>>>> main:Helping Hand/Model/Bluetooth/Manager/Bluetooth/BluetoothManager.swift
 import os
 
 // MARK: - Bluetooth Manager
@@ -91,10 +95,16 @@ internal class BluetoothManager: NSObject, ObservableObject {
         
         centralManager.connect(peripheral, options: nil)
         
+<<<<<<< HEAD:Helping Hand/Model/Bluetooth/Manager/BluetoothManager.swift
         let device = Device(peripheral)
         Task {
             try? await pairingManager.pair(device)
         }
+=======
+        // Pair device
+        let device = Device(peripheral)
+        pairingManager.pairDevice(device)
+>>>>>>> main:Helping Hand/Model/Bluetooth/Manager/Bluetooth/BluetoothManager.swift
         
         os_log("Attempting to connect to %@", peripheral)
     }
