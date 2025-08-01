@@ -7,7 +7,7 @@ import SwiftData
 
 @Observable
 @MainActor
-class DataManager{
+class DataManager {
     
     private(set) var modelContext: ModelContext? = nil
     private(set) var modelContainer: ModelContainer? = nil
@@ -15,7 +15,6 @@ class DataManager{
     private(set) var error: Error? = nil
     
     init(inMemory: Bool) {
-        
         do {
             let configuration = ModelConfiguration(isStoredInMemoryOnly: inMemory)
             let container = try ModelContainer(for: DataFrame.self, Session.self, SessionSettings.self, configurations: configuration)

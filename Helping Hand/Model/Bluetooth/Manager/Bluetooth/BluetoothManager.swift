@@ -5,7 +5,7 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 import os
 
 // MARK: - Bluetooth Manager
@@ -93,7 +93,10 @@ internal class BluetoothManager: NSObject, ObservableObject {
         startValidationTimer(for: peripheral)
         
         centralManager.connect(peripheral, options: nil)
-        pairingManager.pairDevice(peripheral)
+        
+        // Pair device
+        let device = Device(peripheral)
+        pairingManager.pairDevice(device)
         
         os_log("Attempting to connect to %@", peripheral)
     }
