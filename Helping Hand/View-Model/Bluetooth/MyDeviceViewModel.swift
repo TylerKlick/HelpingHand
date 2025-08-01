@@ -77,7 +77,9 @@ extension MyDeviceView {
         }
         
         func loadPairedDevices() {
-            bluetoothManager.loadPairedDevices()
+            Task {
+                await bluetoothManager.loadPairedDevices()
+            }
         }
         
         func connect(to device: Device) {

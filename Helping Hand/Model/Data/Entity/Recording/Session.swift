@@ -17,7 +17,8 @@ import SwiftData
        - SessionSettings: Many-to-One -- Multiple Sessions can share the same SessionSettings, but each may only have one
        - DataFrame: One-to-Many -- A single Session can have multiple DataFrames, but each dataframe may only have one Session.
 */
-@Model public class Session {
+@Model
+final class Session: Sendable {
     @Attribute(.unique) private(set) var sessionID: UUID
     @Relationship(deleteRule: .cascade) private(set) var frames: [DataFrame]?
     private(set) var settings: SessionSettings?

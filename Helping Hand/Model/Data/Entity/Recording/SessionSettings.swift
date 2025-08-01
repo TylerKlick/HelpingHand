@@ -10,7 +10,8 @@ import Foundation
 import SwiftData
 import CryptoKit
 
-@Model public class SessionSettings: Equatable {
+@Model
+final class SessionSettings: Equatable, Sendable {
     
     /// Unique SHA-256 identifier to prevent duplicate SessionSettings creation
     @Attribute(.unique)

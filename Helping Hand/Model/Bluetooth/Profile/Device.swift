@@ -11,7 +11,7 @@ import CoreBluetooth
 
 /// Representation of Bluetooth Peripheral in static storage and at runtime
 @Model
-class Device: Identifiable, ObservableObject {
+final class Device: Identifiable, ObservableObject, Sendable {
     
     // MARK: - Parameters to save in storage
     @Attribute(.unique) private(set) var id: UUID

@@ -9,7 +9,8 @@
 import Foundation
 import SwiftData
 
-@Model public class DataFrame {
+@Model
+final class DataFrame: Sendable {
     @Attribute(.unique) private(set) var frameID: UUID
     @Relationship(inverse: \Session.frames) private(set) var session: Session?
     private(set) var imuData: Data
