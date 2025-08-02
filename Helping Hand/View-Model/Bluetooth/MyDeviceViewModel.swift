@@ -9,6 +9,7 @@ import Foundation
 
 extension MyDeviceView {
     
+    @MainActor
     @Observable
     class ViewModel {
         

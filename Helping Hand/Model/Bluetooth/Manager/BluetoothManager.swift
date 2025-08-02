@@ -5,12 +5,8 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
-<<<<<<< HEAD:Helping Hand/Model/Bluetooth/Manager/BluetoothManager.swift
 import SwiftData
-import CoreBluetooth
-=======
 @preconcurrency import CoreBluetooth
->>>>>>> main:Helping Hand/Model/Bluetooth/Manager/Bluetooth/BluetoothManager.swift
 import os
 
 // MARK: - Bluetooth Manager
@@ -18,7 +14,7 @@ import os
 internal class BluetoothManager: NSObject, ObservableObject {
     
     /// Singleton instance to be shared among all utilizing views and classes
-    static let singleton = BluetoothManager()
+    @MainActor static let singleton = BluetoothManager()
     
     // MARK: - Properties
     private var pairingManager: DevicePairingManager = DevicePairingManager(modelContainer: PersistenceStack.shared.modelContainer)
@@ -95,16 +91,10 @@ internal class BluetoothManager: NSObject, ObservableObject {
         
         centralManager.connect(peripheral, options: nil)
         
-<<<<<<< HEAD:Helping Hand/Model/Bluetooth/Manager/BluetoothManager.swift
         let device = Device(peripheral)
         Task {
             try? await pairingManager.pair(device)
         }
-=======
-        // Pair device
-        let device = Device(peripheral)
-        pairingManager.pairDevice(device)
->>>>>>> main:Helping Hand/Model/Bluetooth/Manager/Bluetooth/BluetoothManager.swift
         
         os_log("Attempting to connect to %@", peripheral)
     }

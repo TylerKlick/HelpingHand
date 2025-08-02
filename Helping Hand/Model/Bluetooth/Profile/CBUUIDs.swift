@@ -2,7 +2,7 @@
 /// the interface device
 
 import Foundation
-import CoreBluetooth
+@preconcurrency import CoreBluetooth
 
 /// S
 struct CBUUIDs {
@@ -21,7 +21,7 @@ struct CBUUIDs {
         let properties: [CharacteristicProperty]
     }
 
-    struct BLEServiceSpec {
+    struct BLEServiceSpec : Sendable{
         let uuid: CBUUID
         let name: String
         let characteristics: [BLECharacteristicSpec]
