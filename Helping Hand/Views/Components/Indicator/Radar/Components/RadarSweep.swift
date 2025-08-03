@@ -9,7 +9,7 @@ import SwiftUI
 
 /// View of Radar scanning arm with Animatable implementation to support live rotation angle binding.
 ///  Alternativley, a timer couild be used to approximate the angle based on the rotationTime in RadarScanner: (currentTime / totalRotationtime) * 360
-struct RadarSweep: View, Animatable {
+struct RadarSweep: View, @preconcurrency Animatable {
     
     // MARK: - UI Elements
     let color: Color

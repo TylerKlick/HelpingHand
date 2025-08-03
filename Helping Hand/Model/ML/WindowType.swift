@@ -5,7 +5,7 @@
 //  Created by Tyler Klick on 7/29/25.
 //
 
-public enum WindowType: String, Codable {
+public enum WindowType: String, Codable, Sendable {
     case hamming
     case hanning
     case rectangular
