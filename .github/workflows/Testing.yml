@@ -26,15 +26,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run Tests on iPhone 16 Simulator
+    - name: Build for Testing
       run: |
-        xcodebuild test \
+        xcodebuild build-for-testing \
+          -scheme "Helping Hand" \
+          -project "Helping Hand.xcodeproj" \
+          -destination 'platform=iOS Simulator,name=iPhone 16' \
+          -resultBundlePath BuildResults
+    
+    - name: Run Tests Without Building
+      run: |
+        xcodebuild test-without-building \
           -scheme "Helping Hand" \
           -project "Helping Hand.xcodeproj" \
           -destination 'platform=iOS Simulator,name=iPhone 16' \
           -resultBundlePath TestResults
     
-    - name: xcresulttool (replace with oiffical version when xcode 16 support is merged)
+    - name: xcresulttool (replace with official version when Xcode 16 support is merged)
       uses: slidoapp/xcresulttool@v3.1.0
       with:
         path: TestResults.xcresult
