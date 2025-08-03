@@ -10,18 +10,19 @@ import Foundation
 import SwiftData
 import CryptoKit
 
-@Model public class SessionSettings: Equatable {
+@Model
+final class SessionSettings: Equatable, Sendable {
     
     /// Unique SHA-256 identifier to prevent duplicate SessionSettings creation
     @Attribute(.unique)
-    private(set) var fingerprint: String
+    private(set) var fingerprint: String = ""
     
     /// One to many relationship with Sessions -- many sessions can share the same settings, but each may only have one SessionSettings
-    @Relationship(inverse: \Session.settings)
-    private(set) var sessions: [Session?] = []
+    @Relationship(deleteRule: .cascade, inverse: \Session.settings)
+    private(set) var sessions: [Session] = []
     
     // MARK: - Sampling Settings
-    private(set) var channelMap: [SensorLocation : Int] = [.forearm : 0]
+    private(set) var channelMap: [SensorLocation : Int] = [SensorLocation.forearm : 0]
     private(set) var sEMGSampleRate: Double
     private(set) var imuSampleRate: Double
     
@@ -37,7 +38,7 @@ import CryptoKit
         self.overlapRatio = overlapRatio
         self.windowSize = windowSize
         self.windowType = windowType
-        self.fingerprint = self.deterministicHash()
+        self.fingerprint = deterministicHash()
     }
     
     /// Equatable function. Uses the SHA-256 fingerprint values to determine if two settings values are equivalent

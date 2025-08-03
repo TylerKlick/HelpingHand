@@ -5,7 +5,8 @@
 //  Created by Tyler Klick on 7/10/25.
 //
 
-import CoreBluetooth
+import SwiftData
+@preconcurrency import CoreBluetooth
 import os
 
 // MARK: - Bluetooth Manager
@@ -13,10 +14,10 @@ import os
 internal class BluetoothManager: NSObject, ObservableObject {
     
     /// Singleton instance to be shared among all utilizing views and classes
-    static let singleton = BluetoothManager()
+    @MainActor static let singleton = BluetoothManager()
     
     // MARK: - Properties
-    private var pairingManager = DevicePairingManager()
+    private var pairingManager: DevicePairingManager = DevicePairingManager(modelContainer: PersistenceStack.shared.modelContainer)
     private var centralManager: CBCentralManager!
     
     var bluetoothState: BluetoothManagerState = .unknown
@@ -30,12 +31,12 @@ internal class BluetoothManager: NSObject, ObservableObject {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
         isScanning = centralManager.isScanning
-        loadPairedDevices()
+        Task { await loadPairedDevices() }
     }
     
     // MARK: - Device Management
-    func loadPairedDevices() {
-        let pairedDevices = pairingManager.getPairedDevicesList()
+    func loadPairedDevices() async {
+        let pairedDevices = (try? await pairingManager.getAllPairings()) ?? []
         let identifiers = pairedDevices.map { $0.identifier }
         let peripherals = centralManager.retrievePeripherals(withIdentifiers: identifiers)
         
@@ -43,11 +44,7 @@ internal class BluetoothManager: NSObject, ObservableObject {
             peripheralInfo[peripheral.identifier] = peripheralInfo[peripheral.identifier] ?? Device(peripheral)
         }
         
-        DispatchQueue.main.async {
-            self.pairedDevices = pairedDevices
-        }
-        
-        os_log("Loaded %d paired devices", pairedDevices.count)
+        self.pairedDevices = pairedDevices
     }
     
     // MARK: - Scanning
@@ -93,7 +90,11 @@ internal class BluetoothManager: NSObject, ObservableObject {
         startValidationTimer(for: peripheral)
         
         centralManager.connect(peripheral, options: nil)
-        pairingManager.pairDevice(peripheral)
+        
+        let device = Device(peripheral)
+        Task {
+            try? await pairingManager.pair(device)
+        }
         
         os_log("Attempting to connect to %@", peripheral)
     }
