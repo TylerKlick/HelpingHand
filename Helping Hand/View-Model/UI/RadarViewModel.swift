@@ -9,6 +9,7 @@ import Foundation
 
 extension RadarScanner {
     
+    @MainActor
     @Observable
     internal class ViewModel {
         

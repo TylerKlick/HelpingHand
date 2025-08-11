@@ -21,21 +21,12 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        
-        // Pre-filter: skip devices that don't advertise any services
-        guard advertisementData[CBAdvertisementDataServiceUUIDsKey] != nil else { return }
-        
-        os_log("Discovered peripheral: %@", peripheral)
-        addDiscoveredPeripheral(peripheral)
-    }
-    
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         handleConnectionError(for: peripheral, error: error)
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        os_log("Connected to peripheral: %@", peripheral)
+        os_log("Connected to peripheral: %@", peripheral.name ?? "unknown")
         
         updateConnectionState(for: peripheral, state: .validating)
         
@@ -44,7 +35,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        os_log("Disconnected from peripheral: %@", peripheral)
+        os_log("Disconnected from peripheral: %@", peripheral.name ?? "unknown")
         
         handleDisconnection(for: peripheral, error: error)
     }
@@ -53,7 +44,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     private func handleConnectionError(for peripheral: CBPeripheral, error: Error?) {
                 
         if let error = error {
-            os_log("Connection error for %@: %@", peripheral, error.localizedDescription)
+            os_log("Connection error for %@: %@", peripheral.name ?? "unknown", error.localizedDescription)
         }
         
         updateConnectionState(for: peripheral, state: .disconnected)
@@ -62,18 +53,17 @@ extension BluetoothManager: CBCentralManagerDelegate {
     
     private func handleDisconnection(for peripheral: CBPeripheral, error: Error?) {
         
-        let peripheralIdentifier = peripheral.identifier
+        guard let device = pairedDevices.first(where: { $0.identifier == peripheral.identifier }) else { return }
 
-        peripheralInfo[peripheralIdentifier]?.validationTimer?.invalidate()
+        device.validationTimer?.invalidate()
         updateConnectionState(for: peripheral, state: .disconnected)
         
         if let error = error {
-            os_log("Disconnection error for %@: %@", peripheral, error.localizedDescription)
+            os_log("Disconnection error for %@: %@", peripheral.name ?? "unknown", error.localizedDescription)
         }
         
         // If peripheral was validating and disconnected unexpectedly, mark as invalid
-        if let info = peripheralInfo[peripheralIdentifier],
-           info.connectionState == .validating {
+        if device.connectionState == .validating {
             handleValidationResult(for: peripheral, isValid: false, reason: "disconnected during validation")
         }
     }

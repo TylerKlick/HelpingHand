@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreBluetooth
 internal import SwiftUIVisualEffects
+import AccessorySetupKit
 
 // MARK: - Main Bluetooth View
 struct MyDeviceView: View {
@@ -36,12 +37,31 @@ struct MyDeviceView: View {
                             hasConnectedDevices: viewModel.hasConnectedDevices,
                             onScanToggle: { viewModel.loadPairedDevices() },
                             onDisconnectAll: { viewModel.disconnectAll() },
-                            onPair: { viewModel.loadPairedDevices()},
+                            onPair: {
+                                let session = viewModel.bluetoothManager.session
+                                let descriptor = ASDiscoveryDescriptor()
+                                descriptor.bluetoothServiceUUID = CBUUID(string: "640DBB7A-D541-4AF3-90FA-4FAA92FBA231")
+                                
+                                let pickerItem = ASPickerDisplayItem(
+                                    name: "My Device",
+                                    productImage: UIImage(named: "arduino")!,
+                                    descriptor: descriptor
+                                )
+                                pickerItem.setupOptions = [.confirmAuthorization]
+                                
+                                session?.showPicker(for: [pickerItem]) { error in
+                                    if let err = error {
+                                        print("Failed to show picker: \(err)")
+                                    }
+                                }
+                            },
                             onConnectAll: { viewModel.connectAllDevices() },
-                            onUpdateAll: { /* TODO: Implement update all */ },
+                            onUpdateAll: {
+
+                            },
                             connectAllEnabled: viewModel.hasPairedAndPowered,
                             disconnectAllEnabled: viewModel.hasActiveAndPowered,
-                            pairEnabled: viewModel.bluetoothState == .poweredOn,
+                            pairEnabled: true,
                             updateAllEnabled: viewModel.isConnectedAndPowered
                         )
                         

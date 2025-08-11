@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct BlipView: View {
     
     @State var opacity: Double = 1.0

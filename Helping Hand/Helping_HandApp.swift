@@ -13,6 +13,7 @@ struct Helping_HandApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            DevicePairingView()
         }
     }
 }

@@ -1,41 +1,42 @@
 import SwiftUI
+import SwiftUIVisualEffects
 
+@MainActor
 struct RadarScanner: View {
     
     static let degrees: Double = 90
-    static let middlePointSize: CGFloat = 15
-    static let scannerSize: CGFloat = 250
-    static let blipSize: CGFloat = 10
-    static let scannerSpeed: Double = 2.0
-    static let color: Color = .green
+    let middlePointSize: CGFloat
+    let scannerSize: CGFloat
+    let scannerThickness: CGFloat
+    let blipSize: CGFloat
+    let scannerSpeed: Double
+    let color: Color
     
     @State private var viewModel = ViewModel()
     
     var body: some View {
         ZStack {
-            Color.white
-            
             Circle()
-                .fill(.white)
-                .frame(width: RadarScanner.scannerSize, height: RadarScanner.scannerSize)
+                .blurEffectStyle(.systemUltraThinMaterial)
+                .frame(width: self.scannerSize, height: self.scannerSize)
             
             ForEach(viewModel.blips, id: \.self) { blip in
-                BlipView(blip: blip, color: RadarScanner.color, blipSize: RadarScanner.blipSize)
+                BlipView(blip: blip, color: self.color, blipSize: self.blipSize)
             }
             
-            RadarSweep(color: RadarScanner.color, scannerSize: RadarScanner.scannerSize, rotation: viewModel.rotation, liveRotation: $viewModel.currentRotation)
+            RadarSweep(color: self.color, scannerSize: self.scannerSize, scannerThickness: self.scannerThickness, rotation: viewModel.rotation, liveRotation: $viewModel.currentRotation)
             
             // Scanner middle point
            Circle()
-                .frame(width: RadarScanner.middlePointSize, height: RadarScanner.middlePointSize)
-               .foregroundColor(RadarScanner.color)
+                .frame(width: self.middlePointSize, height: self.middlePointSize)
+               .foregroundColor(self.color)
             
             Button("Add Blip") {
-                viewModel.addRandomBlip(blipSize: RadarScanner.blipSize, scannerSize: RadarScanner.scannerSize, scannerSpeed: RadarScanner.scannerSpeed)
+                viewModel.addRandomBlip(blipSize: self.blipSize, scannerSize: self.scannerSize, scannerSpeed: self.scannerSpeed)
             }
         }
         .animation(
-            .linear(duration: RadarScanner.scannerSpeed)
+            .linear(duration: self.scannerSpeed)
                 .repeatForever(autoreverses: false),
             value: viewModel.rotation
         )
@@ -46,5 +47,5 @@ struct RadarScanner: View {
 }
 
 #Preview {
-    RadarScanner()
+    RadarScanner(middlePointSize: 15, scannerSize: 250, scannerThickness: 2.0, blipSize: 10, scannerSpeed: 2.0, color: .green)
 }

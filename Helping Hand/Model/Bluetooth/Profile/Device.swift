@@ -14,16 +14,16 @@ import CoreBluetooth
 final class Device: Identifiable, ObservableObject, Sendable {
     
     // MARK: - Parameters to save in storage
-    @Attribute(.unique) private(set) var id: UUID
-    @Attribute(.unique) private(set) var identifier: UUID
+    private(set) var id: UUID
+    private(set) var identifier: UUID
     private(set) var name: String
     private(set) var dateAdded: Date
     private(set) var lastSeen: Date
     
     // MARK: - Parameters only used at runtime (not saved)
-    @Transient @Published var connectionState: DeviceConnectionState = DeviceConnectionState.disconnected
-    @Transient var validationTimer: Timer?
-    @Transient var responseTimer: Timer?
+    @Published var connectionState: DeviceConnectionState = DeviceConnectionState.disconnected
+    var validationTimer: Timer?
+    var responseTimer: Timer?
 
     init(name: String? = nil, identifier: UUID) {
         self.id = UUID()

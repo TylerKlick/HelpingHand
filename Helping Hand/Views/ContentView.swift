@@ -53,7 +53,16 @@ struct ContentView: View {
                     .overlay(
                         MyDeviceView()
                     )
+            },
+            CustomTabItem(
+                systemImageName: "brain",
+                title: "Training",
+                backgroundGradient: LinearGradient(colors: [.blue, .cyan], startPoint: .top, endPoint: .bottom)
+            ) {
+                BontentView()
             }
+            
+            
 
         ]
         

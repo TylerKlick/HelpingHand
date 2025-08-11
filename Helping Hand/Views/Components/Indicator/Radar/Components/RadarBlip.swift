@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct RadarBlip: Identifiable, Hashable {
     var id = UUID() 
     let radialOffset: CGFloat

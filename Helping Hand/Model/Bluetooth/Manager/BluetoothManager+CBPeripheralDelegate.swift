@@ -42,7 +42,7 @@ extension BluetoothManager: CBPeripheralDelegate {
         
         // Check if we've discovered all characteristics for all services
         if hasDiscoveredAllCharacteristics(for: peripheral) {
-            let isValid = validateServicesAndCharacteristics(for: peripheral)
+            let isValid = BluetoothManager.validateServicesAndCharacteristics(for: peripheral)
             handleValidationResult(for: peripheral, isValid: isValid)
             
             if isValid {
@@ -96,34 +96,6 @@ extension BluetoothManager: CBPeripheralDelegate {
         return peripheral.services?.allSatisfy { service in
             service.characteristics != nil
         } ?? false
-    }
-    
-    private func validateServicesAndCharacteristics(for peripheral: CBPeripheral) -> Bool {
-        guard let services = peripheral.services else { return false }
-        
-        let expectedServices = CBUUIDs.serviceUUIDs
-        let foundServices = services.map { $0.uuid }
-        
-        // Check all required services are present
-        guard expectedServices.allSatisfy({ foundServices.contains($0) }) else {
-            os_log("Missing required services")
-            return false
-        }
-        
-        // Check all required characteristics are present
-        for service in services {
-            guard let characteristics = service.characteristics else { return false }
-            
-            let expectedCharacteristics = CBUUIDs.characteristicUUIDs(for: service.uuid)
-            let foundCharacteristics = characteristics.map { $0.uuid }
-            
-            guard expectedCharacteristics.allSatisfy({ foundCharacteristics.contains($0) }) else {
-                os_log("Missing required characteristics for service %@", service.uuid.uuidString)
-                return false
-            }
-        }
-        
-        return true
     }
     
     private func setupCharacteristics(for peripheral: CBPeripheral) {

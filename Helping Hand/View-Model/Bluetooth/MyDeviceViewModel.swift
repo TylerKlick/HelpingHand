@@ -14,6 +14,8 @@ extension MyDeviceView {
     class ViewModel {
         
         let bluetoothManager = BluetoothManager.singleton
+        private let pairingManager: DevicePairingManager = DevicePairingManager(modelContainer: PersistenceStack.shared.modelContainer)
+
         
         // MARK: - State Variables
         var pairedDevices: [Device] {
@@ -25,7 +27,7 @@ extension MyDeviceView {
         }
         
         var isScanning: Bool {
-            bluetoothManager.isScanning
+            false
         }
         
         var connectedDevices: [Device] {
@@ -74,13 +76,10 @@ extension MyDeviceView {
         
         // MARK: - Actions
         func toggleScanning() {
-            bluetoothManager.isScanning ? bluetoothManager.stopScanning() : bluetoothManager.startScanning()
         }
         
         func loadPairedDevices() {
-            Task {
-                await bluetoothManager.loadPairedDevices()
-            }
+      
         }
         
         func connect(to device: Device) {

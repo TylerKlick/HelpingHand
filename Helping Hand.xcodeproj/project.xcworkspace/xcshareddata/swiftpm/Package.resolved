@@ -1,6 +1,15 @@
 {
-  "originHash" : "26431405e097bc4adc3bc80e74c951ec8621b94e32aad714767093b8bc094768",
+  "originHash" : "bf14d8c45f7848983e9a977f8929ed06f88b3ebc50dc3d55e8ca7d0e9dc57e52",
   "pins" : [
+    {
+      "identity" : "asyncobservable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/meech-ward/AsyncObservable.git",
+      "state" : {
+        "revision" : "0c7bdec1fb0c5341de7e463385683cb0b655f885",
+        "version" : "0.4.1"
+      }
+    },
     {
       "identity" : "confettiswiftui",
       "kind" : "remoteSourceControl",
@@ -17,6 +26,15 @@
       "state" : {
         "revision" : "9ddda4cf23671ef0228e88681ec6210cb3e0d7f7",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "ios-corebluetooth-mock",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock",
+      "state" : {
+        "revision" : "d1e0321027728da6edf5b974cf113524bad2034a",
+        "version" : "1.0.1"
       }
     },
     {

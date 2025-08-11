@@ -12,7 +12,7 @@ import SwiftData
 
 // MARK: - Device Pairing Manager
 @ModelActor
-public actor DevicePairingManager: PairingRepository {
+final actor DevicePairingManager: PairingRepository {
     
     private let logger = Logger(subsystem: "com.helpinghand.app", category: "DevicePairingManager")
     

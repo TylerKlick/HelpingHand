@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA4C2B172E40100E005DBC8F /* CoreBluetoothMock in Frameworks */ = {isa = PBXBuildFile; productRef = FA4C2B162E40100E005DBC8F /* CoreBluetoothMock */; };
+		FA4C2B222E401D30005DBC8F /* AsyncObservable in Frameworks */ = {isa = PBXBuildFile; productRef = FA4C2B212E401D30005DBC8F /* AsyncObservable */; };
 		FAA7CE322E2541EA005316CD /* SwiftUIVisualEffects in Frameworks */ = {isa = PBXBuildFile; productRef = FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */; };
 		FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */; };
 		FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = FAFE85192E1DE792007EF21E /* FluidGradient */; };
@@ -60,7 +62,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAD65A502E1D9F82008EDB9A /* ConfettiSwiftUI in Frameworks */,
+				FA4C2B222E401D30005DBC8F /* AsyncObservable in Frameworks */,
 				FAFE851A2E1DE792007EF21E /* FluidGradient in Frameworks */,
+				FA4C2B172E40100E005DBC8F /* CoreBluetoothMock in Frameworks */,
 				FAA7CE322E2541EA005316CD /* SwiftUIVisualEffects in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -117,6 +121,8 @@
 				FAD65A4F2E1D9F82008EDB9A /* ConfettiSwiftUI */,
 				FAFE85192E1DE792007EF21E /* FluidGradient */,
 				FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */,
+				FA4C2B162E40100E005DBC8F /* CoreBluetoothMock */,
+				FA4C2B212E401D30005DBC8F /* AsyncObservable */,
 			);
 			productName = "Helping Hand";
 			productReference = FA7AB61C2DFB3F9C0097E164 /* Helping Hand.app */;
@@ -180,6 +186,8 @@
 				FAD65A4E2E1D9F82008EDB9A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				FAFE85182E1DE792007EF21E /* XCRemoteSwiftPackageReference "FluidGradient" */,
 				FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */,
+				FA4C2B152E40100E005DBC8F /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */,
+				FA4C2B202E401D30005DBC8F /* XCRemoteSwiftPackageReference "AsyncObservable" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA7AB61D2DFB3F9C0097E164 /* Products */;
@@ -295,6 +303,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
 			};
 			name = Debug;
 		};
@@ -350,6 +359,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
 			};
 			name = Release;
 		};
@@ -395,7 +405,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_STRICT_MEMORY_SAFETY = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
@@ -443,7 +453,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_STRICT_MEMORY_SAFETY = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.5;
 			};
@@ -523,6 +533,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		FA4C2B152E40100E005DBC8F /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+		FA4C2B202E401D30005DBC8F /* XCRemoteSwiftPackageReference "AsyncObservable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/meech-ward/AsyncObservable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
 		FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lucasbrown/swiftui-visual-effects.git";
@@ -550,6 +576,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FA4C2B162E40100E005DBC8F /* CoreBluetoothMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA4C2B152E40100E005DBC8F /* XCRemoteSwiftPackageReference "IOS-CoreBluetooth-Mock" */;
+			productName = CoreBluetoothMock;
+		};
+		FA4C2B212E401D30005DBC8F /* AsyncObservable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA4C2B202E401D30005DBC8F /* XCRemoteSwiftPackageReference "AsyncObservable" */;
+			productName = AsyncObservable;
+		};
 		FAA7CE312E2541EA005316CD /* SwiftUIVisualEffects */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FAA7CE302E2541EA005316CD /* XCRemoteSwiftPackageReference "swiftui-visual-effects" */;
