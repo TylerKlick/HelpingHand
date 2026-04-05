@@ -1,0 +1,15 @@
+export const colors = {
+  wolfpackRed: '#CC0000',
+  black: '#000000',
+  white: '#FFFFFF',
+  reynoldsRed: '#9D2235',
+  darkGray: '#333333',
+  mediumGray: '#666666',
+  lightGray: '#E5E5E5',
+  backgroundGray: '#F5F5F5',
+  success: '#2E7D32',
+  warning: '#F9A825',
+  info: '#1565C0',
+  batteryGreen: '#4CAF50',
+  accentRed: '#FF1A1A',
+};

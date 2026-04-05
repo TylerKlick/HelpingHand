@@ -82,3 +82,8 @@ build/*
 # osx noise to remove
 .DS_Store
 profile
+
+#frontend stuff
+node_modules/
+frontend/node_modules/
+frontend/.expo/
