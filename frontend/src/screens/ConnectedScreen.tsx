@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
 
 export default function ConnectedScreen({ navigation }: any) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('Dashboard');
+      navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] });
     }, 2000);
     return () => clearTimeout(timer);
   }, [navigation]);

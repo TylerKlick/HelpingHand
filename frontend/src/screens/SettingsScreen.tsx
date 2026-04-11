@@ -1,31 +1,79 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
+import { bleService, ConnectionState } from '../services/BLEService';
 
-const settingsItems = [
-  { icon: 'bluetooth-outline' as const, label: 'Bluetooth', detail: 'Connected' },
-  { icon: 'notifications-outline' as const, label: 'Notifications', detail: 'On' },
-  { icon: 'hand-left-outline' as const, label: 'Hand Preferences', detail: 'Left Hand' },
-  { icon: 'analytics-outline' as const, label: 'Data & Privacy', detail: '' },
-  { icon: 'information-circle-outline' as const, label: 'About', detail: 'v1.0.0' },
-];
+export default function SettingsScreen({ navigation }: any) {
+  const [state, setState] = useState<ConnectionState>(bleService.getState());
 
-export default function SettingsScreen() {
+  useEffect(() => {
+    const unsub = bleService.onStateChange(setState);
+    return () => unsub();
+  }, []);
+
+  const bluetoothLabel =
+    state === 'validated'
+      ? 'Connected'
+      : state === 'connecting' || state === 'validating'
+      ? 'Connecting...'
+      : state === 'scanning'
+      ? 'Searching...'
+      : 'Not Connected';
+  const bluetoothColor = state === 'validated' ? colors.batteryGreen : colors.warning;
+
+  type Item = {
+    icon: keyof typeof Ionicons.glyphMap;
+    label: string;
+    detail: string;
+    detailColor?: string;
+    onPress?: () => void;
+  };
+
+  const items: Item[] = [
+    {
+      icon: 'bluetooth-outline',
+      label: 'Bluetooth',
+      detail: bluetoothLabel,
+      detailColor: bluetoothColor,
+      onPress: () => navigation.navigate('BluetoothSettings'),
+    },
+    { icon: 'notifications-outline', label: 'Notifications', detail: 'On' },
+    { icon: 'hand-left-outline', label: 'Hand Preferences', detail: 'Left Hand' },
+    {
+      icon: 'analytics-outline',
+      label: 'Data & Privacy',
+      detail: '',
+      onPress: () => navigation.navigate('DataPrivacy'),
+    },
+    { icon: 'information-circle-outline', label: 'About', detail: 'v1.0.0' },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {settingsItems.map((item) => (
-          <TouchableOpacity key={item.label} style={styles.row}>
+        {items.map((item) => (
+          <TouchableOpacity
+            key={item.label}
+            style={styles.row}
+            onPress={item.onPress}
+            disabled={!item.onPress}
+            activeOpacity={item.onPress ? 0.6 : 1}
+          >
             <View style={styles.rowLeft}>
               <Ionicons name={item.icon} size={22} color={colors.wolfpackRed} />
               <Text style={styles.rowLabel}>{item.label}</Text>
             </View>
             <View style={styles.rowRight}>
-              <Text style={styles.rowDetail}>{item.detail}</Text>
+              {!!item.detail && (
+                <Text style={[styles.rowDetail, item.detailColor && { color: item.detailColor, fontWeight: '700' }]}>
+                  {item.detail}
+                </Text>
+              )}
               <Ionicons name="chevron-forward" size={18} color={colors.mediumGray} />
             </View>
           </TouchableOpacity>

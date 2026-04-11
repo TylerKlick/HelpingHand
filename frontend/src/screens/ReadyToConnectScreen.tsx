@@ -1,7 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
+
+function ChecklistItem({
+  icon,
+  text,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  text: string;
+}) {
+  return (
+    <View style={styles.checkRow}>
+      <View style={styles.checkIconWrap}>
+        <Ionicons name={icon} size={18} color={colors.wolfpackRed} />
+      </View>
+      <Text style={styles.checkText}>{text}</Text>
+    </View>
+  );
+}
 
 export default function ReadyToConnectScreen({ navigation }: any) {
   return (
@@ -12,16 +30,21 @@ export default function ReadyToConnectScreen({ navigation }: any) {
         </View>
 
         <Text style={styles.title}>Ready to{'\n'}Connect</Text>
-        <Text style={styles.subtitle}>Make sure your device is turned on</Text>
+        <Text style={styles.subtitle}>Let's get your hand connected!</Text>
 
         <View style={styles.deviceInfo}>
-          <View style={styles.deviceRow}>
-            <Text style={styles.deviceName}>Left Hand</Text>
-          </View>
-          <View style={styles.batteryRow}>
-            <Text style={styles.batteryText}>Battery: 85%</Text>
-            <View style={styles.statusDot} />
-          </View>
+          <ChecklistItem
+            icon="power"
+            text="Make sure your hand is powered on"
+          />
+          <ChecklistItem
+            icon="bluetooth"
+            text="Bluetooth must be turned on"
+          />
+          <ChecklistItem
+            icon="hand-left"
+            text="Hold your hand close to the phone"
+          />
         </View>
 
         <TouchableOpacity
@@ -74,30 +97,15 @@ const styles = StyleSheet.create({
     padding: 16,
     width: '100%',
     marginBottom: 30,
+    gap: 12,
   },
-  deviceRow: {
-    marginBottom: 4,
+  checkRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  checkIconWrap: {
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: colors.white,
+    alignItems: 'center', justifyContent: 'center',
   },
-  deviceName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.black,
-  },
-  batteryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  batteryText: {
-    fontSize: 14,
-    color: colors.mediumGray,
-  },
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.batteryGreen,
-    marginLeft: 8,
-  },
+  checkText: { flex: 1, fontSize: 14, color: colors.darkGray, fontWeight: '500' },
   button: {
     backgroundColor: colors.wolfpackRed,
     paddingHorizontal: 50,

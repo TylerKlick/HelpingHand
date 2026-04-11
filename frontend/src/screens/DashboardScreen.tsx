@@ -1,7 +1,9 @@
-import React from 'react';
-import {View,Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
+import { bleService, ConnectionState } from '../services/BLEService';
 
 const menuItems = [
   { icon: 'hand-left-outline' as const, label: 'My Gestures', screen: 'MyGestures' },
@@ -13,6 +15,27 @@ const menuItems = [
 ];
 
 export default function DashboardScreen({ navigation }: any) {
+  const [state, setState] = useState<ConnectionState>(bleService.getState());
+  const [device, setDevice] = useState(bleService.getConnectedDevice());
+
+  useEffect(() => {
+    const unsub = bleService.onStateChange((s) => {
+      setState(s);
+      setDevice(bleService.getConnectedDevice());
+    });
+    return () => unsub();
+  }, []);
+
+  const isConnected = state === 'validated';
+  const statusLabel = isConnected
+    ? 'Connected'
+    : state === 'connecting' || state === 'validating'
+    ? 'Connecting...'
+    : 'Disconnected';
+  const statusColor = isConnected ? colors.batteryGreen : colors.warning;
+  // Battery: device.battery (-1 = unknown)
+  const batteryPct = device && device.battery >= 0 ? device.battery : null;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -21,12 +44,18 @@ export default function DashboardScreen({ navigation }: any) {
           <Text style={styles.headerTitle}>Dashboard</Text>
           <View style={styles.statusBar}>
             <View style={styles.statusBadge}>
-              <View style={styles.connectedDot} />
-              <Text style={styles.statusText}>Connected</Text>
+              <View style={[styles.connectedDot, { backgroundColor: statusColor }]} />
+              <Text style={styles.statusText}>{statusLabel}</Text>
             </View>
             <View style={styles.batteryBadge}>
-              <Ionicons name="battery-full" size={16} color={colors.batteryGreen} />
-              <Text style={styles.batteryText}>85%</Text>
+              <Ionicons
+                name={batteryPct != null ? 'battery-full' : 'battery-dead-outline'}
+                size={16}
+                color={colors.white}
+              />
+              <Text style={styles.batteryText}>
+                {batteryPct != null ? `${batteryPct}%` : '—'}
+              </Text>
             </View>
           </View>
         </View>

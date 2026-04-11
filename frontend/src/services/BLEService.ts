@@ -62,6 +62,7 @@ class BLEService {
   private dataListeners = new Set<DataListener>();
   private dataBuffer: SensorData[] = [];
   private bleManager: any = null; // BleManager from react-native-ble-plx
+  private nativeDevice: any = null; // raw react-native-ble-plx Device handle
 
   constructor() {
     this.initBLE();
@@ -133,10 +134,17 @@ class BLEService {
           this.setState('disconnected');
           return;
         }
-        if (device?.name) {
+        if (device) {
+          console.log(
+            '[BLE] Found hand device:',
+            device.name || '(unnamed)',
+            device.id,
+            'RSSI:', device.rssi
+          );
+
           const info: DeviceInfo = {
             id: device.id,
-            name: device.name || 'Unknown Hand',
+            name: device.name || 'Helping Hand',
             battery: -1, 
             rssi: device.rssi ?? -100,
             connectionState: 'disconnected',
@@ -195,6 +203,7 @@ class BLEService {
       // Subscribe to sensor data notifications
       await this.subscribeToSensorData(device);
 
+      this.nativeDevice = device;
       this.connectedDevice = {
         id: device.id,
         name: device.name || 'Helping Hand',
@@ -208,6 +217,7 @@ class BLEService {
       // Monitor disconnection
       this.bleManager.onDeviceDisconnected(deviceId, () => {
         this.connectedDevice = null;
+        this.nativeDevice = null;
         this.setState('disconnected');
       });
     } catch (error) {
@@ -284,7 +294,21 @@ class BLEService {
     }
   }
 
-  // Motor Angle Reading (for custom gestures) 
+  // RSSI (live signal strength)
+
+  async readRSSI(): Promise<number | null> {
+    if (!this.nativeDevice) return null;
+    try {
+      const updated = await this.nativeDevice.readRSSI();
+      const rssi = updated?.rssi ?? null;
+      if (rssi != null && this.connectedDevice) {
+        this.connectedDevice.rssi = rssi;
+      }
+      return rssi;
+    } catch {
+      return null;
+    }
+  }
 
   async readMotorAngles(): Promise<number[] | null> {
     // TODO: When Arduino firmware exposes motor angle characteristic read it here. 
@@ -306,6 +330,7 @@ class BLEService {
       }
     }
     this.connectedDevice = null;
+    this.nativeDevice = null;
     this.dataBuffer = [];
     this.setState('disconnected');
   }

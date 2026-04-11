@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
 
 const helpTopics = [
-  { icon: 'bluetooth' as const, title: 'Connecting Your Device', desc: 'How to pair and connect via Bluetooth' },
   { icon: 'hand-left' as const, title: 'Using Gestures', desc: 'Learn about available gestures and how to activate them' },
   { icon: 'construct' as const, title: 'Troubleshooting', desc: 'Common issues and how to fix them' },
   { icon: 'battery-charging' as const, title: 'Battery & Charging', desc: 'Charging instructions and battery care' },

@@ -19,6 +19,8 @@ import HealthMonitorScreen from '../screens/HealthMonitorScreen';
 import UpdatesScreen from '../screens/UpdatesScreen';
 import GamesScreen from '../screens/GamesScreen';
 import CreateGestureScreen from '../screens/CreateGestureScreen';
+import BluetoothSettingsScreen from '../screens/BluetoothSettingsScreen';
+import DataPrivacyScreen from '../screens/DataPrivacyScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,7 +51,7 @@ function DashboardTabs() {
       <Tab.Screen name="DashboardTab" component={DashboardStack} options={{ title: 'Home' }} />
       <Tab.Screen name="MyGesturesTab" component={GestureStack} options={{ title: 'Gestures' }} />
       <Tab.Screen name="HealthTab" component={HealthMonitorScreen} options={{ title: 'Health' }} />
-      <Tab.Screen name="SettingsTab" component={SettingsScreen} options={{ title: 'Settings' }} />
+      <Tab.Screen name="SettingsTab" component={SettingsStack} options={{ title: 'Settings' }} />
     </Tab.Navigator>
   );
 }
@@ -64,8 +66,20 @@ function DashboardStack() {
       <Stack.Screen name="HealthMonitor" component={HealthMonitorScreen} />
       <Stack.Screen name="Updates" component={UpdatesScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="BluetoothSettings" component={BluetoothSettingsScreen} />
+      <Stack.Screen name="DataPrivacy" component={DataPrivacyScreen} />
       <Stack.Screen name="Games" component={GamesScreen} />
       <Stack.Screen name="CreateGesture" component={CreateGestureScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function SettingsStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SettingsHome" component={SettingsScreen} />
+      <Stack.Screen name="BluetoothSettings" component={BluetoothSettingsScreen} />
+      <Stack.Screen name="DataPrivacy" component={DataPrivacyScreen} />
     </Stack.Navigator>
   );
 }
@@ -89,7 +103,11 @@ export default function AppNavigator() {
         <Stack.Screen name="Searching" component={SearchingScreen} />
         <Stack.Screen name="Connected" component={ConnectedScreen} />
         {/* Main App with tabs */}
-        <Stack.Screen name="Dashboard" component={DashboardTabs} />
+        <Stack.Screen
+          name="Dashboard"
+          component={DashboardTabs}
+          options={{ gestureEnabled: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
