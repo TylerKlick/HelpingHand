@@ -21,6 +21,7 @@ import GamesScreen from '../screens/GamesScreen';
 import CreateGestureScreen from '../screens/CreateGestureScreen';
 import BluetoothSettingsScreen from '../screens/BluetoothSettingsScreen';
 import DataPrivacyScreen from '../screens/DataPrivacyScreen';
+import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -67,6 +68,7 @@ function DashboardStack() {
       <Stack.Screen name="Updates" component={UpdatesScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="BluetoothSettings" component={BluetoothSettingsScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="DataPrivacy" component={DataPrivacyScreen} />
       <Stack.Screen name="Games" component={GamesScreen} />
       <Stack.Screen name="CreateGesture" component={CreateGestureScreen} />
@@ -79,6 +81,7 @@ function SettingsStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SettingsHome" component={SettingsScreen} />
       <Stack.Screen name="BluetoothSettings" component={BluetoothSettingsScreen} />
+      <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="DataPrivacy" component={DataPrivacyScreen} />
     </Stack.Navigator>
   );

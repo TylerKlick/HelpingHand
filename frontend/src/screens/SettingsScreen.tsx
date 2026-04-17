@@ -1,17 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
 import { bleService, ConnectionState } from '../services/BLEService';
+import { notificationService } from '../services/NotificationService';
 
 export default function SettingsScreen({ navigation }: any) {
   const [state, setState] = useState<ConnectionState>(bleService.getState());
+  const [notifStatus, setNotifStatus] = useState<string>('...');
 
   useEffect(() => {
     const unsub = bleService.onStateChange(setState);
     return () => unsub();
   }, []);
+
+  // Refresh notification status 
+  useFocusEffect(
+    useCallback(() => {
+      notificationService.getPermissionStatus().then((status) => {
+        if (status === 'granted') setNotifStatus('On');
+        else if (status === 'denied') setNotifStatus('Off');
+        else setNotifStatus('Not set');
+      });
+    }, []),
+  );
 
   const bluetoothLabel =
     state === 'validated'
@@ -39,7 +53,7 @@ export default function SettingsScreen({ navigation }: any) {
       detailColor: bluetoothColor,
       onPress: () => navigation.navigate('BluetoothSettings'),
     },
-    { icon: 'notifications-outline', label: 'Notifications', detail: 'On' },
+    { icon: 'notifications-outline', label: 'Notifications', detail: notifStatus, onPress: () => navigation.navigate('NotificationSettings'),},
     { icon: 'hand-left-outline', label: 'Hand Preferences', detail: 'Left Hand' },
     {
       icon: 'analytics-outline',
