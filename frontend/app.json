@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "edu.ncsu.helpinghands",
+      "bundleIdentifier": "com.tiva.helpinghands",
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Helping Hands needs Bluetooth to connect to your prosthetic hand device.",
         "NSBluetoothPeripheralUsageDescription": "Helping Hands needs Bluetooth to connect to your prosthetic hand device.",
