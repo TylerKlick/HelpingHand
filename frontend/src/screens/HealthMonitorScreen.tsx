@@ -38,7 +38,6 @@ export default function HealthMonitorScreen() {
   // Live counters 
   const packetCountRef = useRef(0);
   const lastTickRef = useRef({ count: 0, time: Date.now() });
-  const connectedAtRef = useRef<number | null>(null);
 
   //  BLE state + sensor data
   useEffect(() => {
@@ -47,11 +46,7 @@ export default function HealthMonitorScreen() {
       if (!mounted) return;
       setState(s);
       setDevice(bleService.getConnectedDevice());
-      if (s === 'validated' && connectedAtRef.current == null) {
-        connectedAtRef.current = Date.now();
-      }
       if (s === 'disconnected') {
-        connectedAtRef.current = null;
         packetCountRef.current = 0;
         setPacketCount(0);
         setHasData(false);
@@ -67,10 +62,6 @@ export default function HealthMonitorScreen() {
         Animated.timing(pulse, { toValue: 1,    duration: 200, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
       ]).start();
     });
-
-    if (bleService.getState() === 'validated' && connectedAtRef.current == null) {
-      connectedAtRef.current = Date.now();
-    }
 
     return () => {
       mounted = false;
@@ -104,7 +95,8 @@ export default function HealthMonitorScreen() {
       const dCount = packetCountRef.current - lastTickRef.current.count;
       setPacketsPerSec(dt > 0 ? Math.round(dCount / dt) : 0);
       lastTickRef.current = { count: packetCountRef.current, time: now };
-      setUptime(connectedAtRef.current ? now - connectedAtRef.current : 0);
+      const connectedAt = bleService.getConnectedAt();
+      setUptime(connectedAt ? now - connectedAt : 0);
     }, 1000);
     return () => clearInterval(id);
   }, []);

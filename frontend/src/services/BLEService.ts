@@ -63,6 +63,7 @@ class BLEService {
   private dataBuffer: SensorData[] = [];
   private bleManager: any = null; // BleManager from react-native-ble-plx
   private nativeDevice: any = null; // raw react-native-ble-plx Device handle
+  private connectedAt: number | null = null; // ms timestamp when state hit 'validated'
 
   constructor() {
     this.initBLE();
@@ -113,8 +114,17 @@ class BLEService {
     return () => { this.dataListeners.delete(listener); };
   }
 
+  getConnectedAt(): number | null {
+    return this.connectedAt;
+  }
+
   private setState(newState: ConnectionState) {
     this.state = newState;
+    if (newState === 'validated') {
+      this.connectedAt = Date.now();
+    } else if (newState === 'disconnected') {
+      this.connectedAt = null;
+    }
     this.stateListeners.forEach((l) => l(newState));
   }
 
